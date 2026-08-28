@@ -1,0 +1,2284 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#141823">
+  <meta name="referrer" content="no-referrer">
+  <meta name="format-detection" content="telephone=no">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src 'self' data:; connect-src 'none'; object-src 'none'; media-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Интерактивная витрина компонентов в стиле тёмного тактильного неоскевоморфизма. Чистые HTML, CSS и JavaScript.">
+  <title>Урок 3-2 — тактильный интерфейс</title>
+  <style>
+    /*
+      Dark Tactile UI Kit
+      Один автономный HTML-файл: без фреймворков, внешних библиотек и изображений.
+      Шрифтовые стеки используют локальные Roboto / JetBrains Mono при наличии
+      и безопасные системные fallback-шрифты при их отсутствии.
+    */
+
+    :root {
+      color-scheme: dark;
+
+      --bg-deep: #0b0e15;
+      --bg-page: #1d232c;
+      --bg-cool: #29313e;
+      --surface-graphite-light: #414045;
+      --surface-graphite: #2a2c33;
+      --surface-navy-deep: #141823;
+      --surface-sidebar: #21252f;
+
+      --steel-light: #596c83;
+      --steel-base: #40546b;
+      --steel-dark: #32435a;
+      --steel-shadow: #233040;
+
+      --taupe-light: #9b9085;
+      --taupe-base: #7b726b;
+      --taupe-dark: #5d5651;
+      --taupe-shadow: #423c36;
+
+      --blue-active: #57b2f9;
+      --blue-hover: #8ab6e5;
+      --blue-soft: #a2cff4;
+      --blue-focus: #edf8f6;
+
+      --champagne-dark: #968568;
+      --champagne: #ccb17d;
+      --champagne-mid: #e0c790;
+      --champagne-light: #f3e0ac;
+      --champagne-highlight: #fcf6dd;
+
+      --text-primary: #f3f1ec;
+      --text-secondary: #d1dbea;
+      --text-warm: #dcd4c8;
+      --text-muted: #b8b7b7;
+      --text-disabled: #e1dedb;
+      --text-dark: #17202a;
+
+      --success: #9fbea3;
+      --success-light: #d4ead3;
+      --error: #d98f86;
+      --error-light: #f0b5ad;
+      --warning: #e0c790;
+
+      --radius-xs: 4px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --radius-shell: 38px;
+      --radius-pill: 999px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 24px;
+      --space-6: 32px;
+      --space-7: 48px;
+      --space-8: 64px;
+      --space-9: 96px;
+
+      --border-subtle: 1px solid rgba(252, 246, 221, 0.14);
+      --border-standard: 1px solid rgba(252, 246, 221, 0.28);
+      --border-strong: 2px solid rgba(243, 224, 172, 0.86);
+
+      --shadow-inset: inset 1px 1px 0 rgba(255, 255, 255, 0.16), inset -2px -3px 7px rgba(5, 8, 14, 0.38);
+      --shadow-level-1: 0 5px 12px rgba(4, 7, 12, 0.34), var(--shadow-inset);
+      --shadow-level-2: 0 12px 26px rgba(4, 7, 12, 0.48), 0 2px 5px rgba(4, 7, 12, 0.54), var(--shadow-inset);
+      --shadow-level-3: 0 24px 52px rgba(3, 6, 12, 0.62), 0 7px 18px rgba(4, 7, 12, 0.52), var(--shadow-inset);
+      --shadow-pressed: inset 4px 5px 9px rgba(2, 7, 16, 0.64), inset -1px -1px 2px rgba(218, 235, 255, 0.12);
+      --glow-blue: 0 0 0 1px rgba(162, 207, 244, 0.72), 0 0 14px rgba(87, 178, 249, 0.50), 0 0 30px rgba(87, 178, 249, 0.18);
+      --glow-gold: 0 0 0 1px rgba(252, 246, 221, 0.80), 0 0 13px rgba(224, 199, 144, 0.45), 0 0 28px rgba(204, 177, 125, 0.18);
+
+      --duration-fast: 120ms;
+      --duration-base: 190ms;
+      --duration-slow: 280ms;
+      --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+      --font-ui: "Roboto", "Segoe UI", Arial, sans-serif;
+      --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+      --header-height: 70px;
+      --content-max: 1280px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      min-width: 320px;
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--header-height) + 32px);
+      background: var(--surface-navy-deep);
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 16px;
+      line-height: 1.55;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      background:
+        radial-gradient(ellipse 74% 33% at 52% -4%, rgba(154, 147, 137, 0.58), transparent 68%),
+        radial-gradient(circle at 2% 23%, rgba(73, 100, 130, 0.44), transparent 34%),
+        radial-gradient(circle at 98% 30%, rgba(139, 128, 113, 0.30), transparent 35%),
+        linear-gradient(145deg, var(--bg-cool) 0%, var(--bg-page) 44%, var(--surface-navy-deep) 100%);
+      background-attachment: fixed;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      content: "";
+      opacity: 0.12;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.50'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+    }
+
+    body.has-overlay { overflow: hidden; }
+
+    a { color: inherit; }
+    button, input, textarea, select { font: inherit; }
+    button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+    button { border: 0; }
+    svg { display: block; max-inline-size: 100%; }
+    img { display: block; max-inline-size: 100%; }
+    [hidden] { display: none !important; }
+    abbr[title], kbd[title] { color: inherit; font: inherit; text-decoration: underline dotted currentColor; text-underline-offset: 3px; cursor: help; }
+
+    :focus-visible {
+      outline: 2px solid var(--blue-focus);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 5px rgba(87, 178, 249, 0.30);
+    }
+
+    ::selection {
+      color: var(--text-dark);
+      background: var(--champagne-light);
+    }
+
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0 0 0 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      padding: 10px 15px;
+      color: var(--text-dark);
+      background: var(--champagne-highlight);
+      border-radius: var(--radius-sm);
+      transform: translateY(-160%);
+      transition: transform var(--duration-fast) var(--ease-out);
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      flex: 0 0 auto;
+      color: currentColor;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .icon-sm { width: 1rem; height: 1rem; }
+    .icon-lg { width: 1.5rem; height: 1.5rem; }
+
+    .site-shell {
+      position: relative;
+      width: min(var(--content-max), calc(100% - 48px));
+      margin: 28px auto 40px;
+      border: 1px solid rgba(252, 246, 221, 0.46);
+      border-radius: var(--radius-shell);
+      background:
+        linear-gradient(180deg, rgba(65, 64, 69, 0.94) 0%, rgba(42, 44, 51, 0.97) 16%, rgba(20, 24, 35, 0.99) 100%);
+      box-shadow:
+        0 0 0 1px rgba(250, 248, 239, 0.12),
+        0 0 10px rgba(250, 240, 204, 0.52),
+        0 0 30px rgba(204, 189, 167, 0.32),
+        0 28px 65px rgba(4, 7, 13, 0.70),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -12px 30px rgba(4, 8, 16, 0.26);
+    }
+
+    .site-shell::before {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      border-radius: inherit;
+      opacity: 0.23;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='.34'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      min-height: var(--header-height);
+      gap: var(--space-4);
+      margin: 12px;
+      padding: 10px 14px 10px 18px;
+      border: var(--border-standard);
+      border-radius: 26px;
+      background: rgba(24, 28, 38, 0.90);
+      box-shadow: 0 14px 30px rgba(3, 6, 12, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px) saturate(115%);
+      -webkit-backdrop-filter: blur(16px) saturate(115%);
+    }
+
+    .scroll-status {
+      position: absolute;
+      right: 58px;
+      bottom: 5px;
+      left: 18px;
+      height: 3px;
+      border-radius: var(--radius-pill);
+      background: rgba(209, 219, 234, 0.14);
+      box-shadow: inset 0 1px 2px rgba(3, 6, 12, 0.52);
+    }
+    .scroll-status-fill {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue-active), var(--champagne-light));
+      box-shadow: 0 0 10px rgba(87, 178, 249, 0.56);
+      transition: width 90ms linear;
+    }
+    .scroll-status-value {
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 8px);
+      min-width: 34px;
+      color: var(--champagne-light);
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      line-height: 1;
+      text-align: right;
+      transform: translateY(-50%);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      min-width: 0;
+      gap: 10px;
+      color: var(--text-primary);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .brand-mark, .icon-tile {
+      display: inline-grid;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      place-items: center;
+      color: var(--champagne-light);
+      border: 1px solid rgba(252, 246, 221, 0.30);
+      border-radius: 11px;
+      background: linear-gradient(145deg, rgba(89, 108, 131, 0.92), rgba(35, 48, 64, 0.98));
+      box-shadow: var(--shadow-level-1);
+    }
+
+    .brand-text { display: grid; line-height: 1.05; }
+    .brand-text strong { font-size: 0.92rem; letter-spacing: 0.02em; }
+    .brand-text small { margin-top: 5px; color: var(--text-muted); font-family: var(--font-mono); font-size: 0.62rem; }
+
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 3px;
+      margin-left: auto;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      color: var(--text-secondary);
+      font-size: 0.84rem;
+      text-decoration: none;
+      border: 1px solid transparent;
+      border-radius: var(--radius-pill);
+      transition: color var(--duration-base), background var(--duration-base), border-color var(--duration-base);
+    }
+
+    .nav-link:hover,
+    .nav-link[aria-current="location"] {
+      color: var(--text-primary);
+      border-color: rgba(162, 207, 244, 0.24);
+      background: rgba(89, 108, 131, 0.24);
+    }
+
+    .nav-link[aria-current="location"]::before {
+      width: 5px;
+      height: 5px;
+      margin-right: 7px;
+      content: "";
+      border-radius: 50%;
+      background: var(--champagne-light);
+      box-shadow: 0 0 9px rgba(243, 224, 172, 0.60);
+    }
+
+    .menu-button {
+      display: none;
+      width: 44px;
+      height: 44px;
+      margin-left: auto;
+      place-items: center;
+      color: var(--text-primary);
+      border: var(--border-standard);
+      border-radius: var(--radius-md);
+      background: linear-gradient(145deg, var(--steel-base), var(--steel-dark));
+      box-shadow: var(--shadow-level-1);
+      cursor: pointer;
+    }
+    .menu-button .icon-close { display: none; }
+    .menu-button[aria-expanded="true"] .icon-menu { display: none; }
+    .menu-button[aria-expanded="true"] .icon-close { display: block; }
+
+    .nav-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(5, 8, 14, 0.68);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    main { position: relative; z-index: 1; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+      gap: clamp(32px, 5vw, 76px);
+      align-items: center;
+      min-height: 610px;
+      padding: clamp(54px, 7vw, 92px) clamp(28px, 6vw, 82px) clamp(64px, 8vw, 104px);
+    }
+
+    .eyebrow, .state-label, .token-name, .tech-badge {
+      font-family: var(--font-mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 20px;
+      color: var(--champagne-light);
+      font-size: 0.72rem;
+    }
+    .eyebrow::before {
+      width: 28px;
+      height: 1px;
+      content: "";
+      background: linear-gradient(90deg, var(--champagne), transparent);
+    }
+
+    h1, h2, h3, p { overflow-wrap: break-word; }
+    h1, h2, h3 { margin-top: 0; line-height: 1.08; }
+    h1 {
+      max-width: 780px;
+      margin-bottom: 24px;
+      font-size: clamp(2.55rem, 5.2vw, 4.9rem);
+      font-weight: 600;
+      letter-spacing: -0.045em;
+    }
+    h1 .accent {
+      color: var(--champagne-highlight);
+      text-shadow: 0 0 24px rgba(224, 199, 144, 0.20);
+    }
+    h2 { margin-bottom: 13px; font-size: clamp(1.75rem, 3vw, 2.55rem); font-weight: 560; letter-spacing: -0.025em; }
+    h3 { margin-bottom: 9px; font-size: 1.08rem; font-weight: 600; }
+
+    .hero-copy > p {
+      max-width: 690px;
+      margin: 0 0 28px;
+      color: var(--text-secondary);
+      font-size: clamp(1rem, 1.5vw, 1.16rem);
+    }
+
+    .tech-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: 0 0 30px;
+      padding: 0;
+      list-style: none;
+    }
+    .tech-badge {
+      display: inline-flex;
+      gap: 0.35em;
+      min-height: 30px;
+      align-items: center;
+      padding: 5px 10px;
+      color: var(--text-muted);
+      font-size: 0.64rem;
+      border: 1px solid rgba(209, 219, 234, 0.16);
+      border-radius: var(--radius-pill);
+      background: rgba(16, 20, 29, 0.34);
+    }
+
+    .hero-actions, .button-row, .modal-actions, .inline-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 430px;
+      overflow: hidden;
+      overflow: clip;
+      isolation: isolate;
+    }
+    .hero-visual::before {
+      position: absolute;
+      inset: 9% 6% 6% 8%;
+      z-index: -1;
+      content: "";
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(87, 178, 249, 0.23), rgba(204, 177, 125, 0.09) 43%, transparent 70%);
+      filter: blur(28px);
+    }
+
+    .floating-card {
+      position: absolute;
+      width: min(78%, 390px);
+      padding: 22px;
+      border: var(--border-standard);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-level-3);
+    }
+    .floating-card.cool {
+      top: 25px;
+      left: 0;
+      background: linear-gradient(145deg, rgba(89, 108, 131, 0.97), rgba(50, 67, 90, 0.98));
+      transform: rotate(-2.4deg);
+    }
+    .floating-card.warm {
+      right: 2px;
+      bottom: 48px;
+      background: linear-gradient(145deg, rgba(182, 170, 157, 0.98), rgba(146, 135, 124, 0.99));
+      transform: rotate(2.8deg);
+    }
+    .floating-card.warm h3, .floating-card.warm p, .floating-card.warm .mini-metric { color: #1b1b1d; }
+    .floating-card.warm .mini-metric { background: rgba(252,246,221,.24); }
+    .floating-card p { margin: 0; color: var(--text-secondary); font-size: 0.88rem; }
+    .floating-card-head { display: flex; gap: 12px; align-items: center; margin-bottom: 24px; }
+    .floating-card-head .icon-tile { width: 34px; height: 34px; flex-basis: 34px; }
+    .mini-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 20px; }
+    .mini-metric { padding: 10px; color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.68rem; border-radius: var(--radius-sm); background: rgba(7, 11, 18, 0.22); box-shadow: inset 2px 2px 5px rgba(1, 4, 9, 0.24); }
+    .mini-metric strong { display: block; margin-bottom: 3px; color: inherit; font-size: 1.02rem; }
+
+    .floating-token {
+      position: absolute;
+      right: 8%;
+      top: 11px;
+      z-index: 3;
+      padding: 9px 12px;
+      color: var(--text-dark);
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      border: 1px solid rgba(252, 246, 221, 0.82);
+      border-radius: var(--radius-pill);
+      background: linear-gradient(180deg, var(--champagne-highlight), var(--champagne-mid));
+      box-shadow: var(--glow-gold);
+    }
+
+    .workbench {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(26px, 4vw, 48px);
+      align-items: start;
+      padding: 0 clamp(20px, 4vw, 54px) clamp(54px, 7vw, 86px);
+    }
+    .content-column { min-width: 0; }
+
+    .component-section {
+      position: relative;
+      margin-bottom: 32px;
+      padding: clamp(22px, 4vw, 38px);
+      border: var(--border-subtle);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(145deg, rgba(46, 48, 55, 0.78), rgba(21, 25, 35, 0.90));
+      box-shadow: var(--shadow-level-2);
+    }
+    .component-section::before {
+      position: absolute;
+      top: 0;
+      left: 8%;
+      width: 46%;
+      height: 1px;
+      content: "";
+      background: linear-gradient(90deg, transparent, rgba(252, 246, 221, 0.52), transparent);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: start;
+      margin-bottom: 26px;
+    }
+    .section-head > div { min-width: 0; }
+    .section-head p { max-width: 680px; margin: 0; color: var(--text-muted); }
+    .section-index { flex: 0 0 auto; color: var(--champagne); font-family: var(--font-mono); font-size: 0.76rem; }
+
+    .demo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .demo-stage, .state-board, .subpanel {
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid rgba(209, 219, 234, 0.12);
+      border-radius: var(--radius-lg);
+      background: rgba(13, 17, 25, 0.42);
+      box-shadow: inset 3px 3px 10px rgba(3, 6, 12, 0.38), inset -1px -1px 0 rgba(255, 255, 255, 0.04);
+    }
+    .demo-stage > h3, .state-board > h3, .subpanel > h3 { color: var(--text-warm); font-size: 0.84rem; letter-spacing: 0.03em; }
+    .state-list { display: grid; gap: 12px; }
+    .state-item { display: grid; grid-template-columns: minmax(72px, 0.38fr) minmax(0, 1fr); gap: 12px; align-items: center; }
+    .state-label { color: var(--text-muted); font-size: 0.62rem; }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      min-height: 46px;
+      min-width: 138px;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 10px 19px;
+      color: var(--text-primary);
+      font-weight: 650;
+      font-size: 0.9rem;
+      line-height: 1.1;
+      text-decoration: none;
+      border: 1px solid rgba(252, 246, 221, 0.54);
+      border-radius: var(--radius-pill);
+      background: linear-gradient(180deg, #4f6680 0%, #384e69 54%, #2c405a 100%);
+      box-shadow: var(--shadow-level-1), 0 0 11px rgba(204, 177, 125, 0.12);
+      cursor: pointer;
+      transition: transform var(--duration-fast) var(--ease-out), color var(--duration-base), background var(--duration-base), box-shadow var(--duration-base), border-color var(--duration-base), opacity var(--duration-base);
+      user-select: none;
+    }
+    .btn:hover:not(:disabled):not(.is-loading), .btn.demo-hover {
+      color: var(--text-dark);
+      border-color: var(--blue-focus);
+      background: linear-gradient(180deg, #b5d8f5 0%, #8ab6e5 52%, #6d9fd6 100%);
+      box-shadow: var(--shadow-level-1), var(--glow-blue);
+      transform: translateY(-1px);
+    }
+    .btn:active:not(:disabled), .btn.demo-pressed {
+      color: var(--text-primary);
+      border-color: rgba(162, 207, 244, 0.48);
+      background: linear-gradient(180deg, #253852, #122746);
+      box-shadow: var(--shadow-pressed);
+      transform: translateY(1px);
+    }
+    .btn:disabled, .btn.demo-disabled {
+      color: #d7d4d1;
+      border-color: rgba(225, 222, 219, 0.28);
+      background: linear-gradient(180deg, #575355, #4a494c);
+      box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.07);
+      cursor: not-allowed;
+      opacity: 1;
+    }
+    .btn-secondary {
+      color: #f8f4ef;
+      border-color: rgba(252, 246, 221, 0.46);
+      background: linear-gradient(180deg, #756b63, #625a54 60%, #514b47);
+    }
+    .btn-secondary:hover:not(:disabled) { color: var(--text-dark); background: linear-gradient(180deg, #f7e7bd, #d9bd86); border-color: var(--champagne-highlight); box-shadow: var(--shadow-level-1), var(--glow-gold); }
+    .btn-ghost { color: var(--text-primary); background: rgba(13, 17, 25, 0.30); border-color: rgba(209, 219, 234, 0.24); box-shadow: inset 0 1px 0 rgba(255,255,255,0.04); }
+    .btn-ghost:hover:not(:disabled) { color: var(--text-dark); background: var(--blue-hover); }
+    .btn-icon { min-width: 46px; width: 46px; padding: 0; }
+    .btn-small { min-width: 0; min-height: 44px; padding: 7px 14px; font-size: 0.78rem; }
+
+    .spinner {
+      display: none;
+      width: 17px;
+      height: 17px;
+      border: 2px solid rgba(23, 32, 42, 0.28);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    .is-loading .spinner, .demo-loading .spinner { display: inline-block; }
+    .btn.is-loading { cursor: wait; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .field-stack { display: grid; gap: 15px; }
+    .field { min-width: 0; }
+    .field label, .field-label { display: inline-block; margin-bottom: 7px; color: var(--text-warm); font-size: 0.82rem; font-weight: 600; }
+    .field-hint { margin: 6px 0 0; color: var(--text-muted); font-size: 0.76rem; }
+    .field-error { min-height: 1.15rem; margin: 6px 0 0; color: var(--error-light); font-size: 0.76rem; }
+
+    .input-wrap { position: relative; }
+    .input-control, select.input-control {
+      width: 100%;
+      min-height: 48px;
+      padding: 11px 14px;
+      color: var(--text-primary);
+      caret-color: var(--champagne-light);
+      border: 1px solid rgba(209, 219, 234, 0.19);
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, rgba(76, 75, 77, 0.92), rgba(48, 52, 59, 0.97));
+      box-shadow: inset 3px 4px 8px rgba(5, 7, 11, 0.40), inset -1px -1px 0 rgba(255, 255, 255, 0.08);
+      transition: background var(--duration-base), border-color var(--duration-base), box-shadow var(--duration-base);
+    }
+    textarea.input-control { min-height: 118px; resize: vertical; }
+    .input-control::placeholder { color: #e6e2dd; opacity: 1; }
+    .input-control:hover:not(:disabled) { border-color: rgba(162, 207, 244, 0.45); }
+    .input-control:focus {
+      outline: 2px solid var(--blue-focus);
+      outline-offset: 2px;
+      border-color: var(--blue-soft);
+      background: linear-gradient(180deg, rgba(83, 105, 129, 0.92), rgba(49, 65, 84, 0.96));
+      box-shadow: inset 2px 3px 7px rgba(4, 8, 15, 0.40), var(--glow-blue);
+    }
+    .input-control[aria-invalid="true"], .input-control.is-error { border-color: var(--error-light); box-shadow: inset 2px 3px 7px rgba(4, 8, 15, 0.40), 0 0 0 2px rgba(217, 143, 134, 0.25); }
+    .input-control.is-success { border-color: var(--success-light); box-shadow: inset 2px 3px 7px rgba(4, 8, 15, 0.40), 0 0 0 2px rgba(159, 190, 163, 0.24); }
+    .input-control:disabled { color: #d7d4d1; background: linear-gradient(180deg, #575355, #4a494c); opacity: 1; cursor: not-allowed; }
+    .input-control:-webkit-autofill,
+    .input-control:-webkit-autofill:hover,
+    .input-control:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--text-primary);
+      caret-color: var(--champagne-light);
+      -webkit-box-shadow: inset 0 0 0 1000px var(--steel-dark), var(--glow-blue);
+      transition: background-color 9999s ease-out 0s;
+    }
+    select.input-control { color-scheme: dark; cursor: pointer; }
+    select.input-control option { color: var(--text-primary); background: var(--surface-graphite); }
+
+    .input-with-action .input-control { padding-right: 50px; }
+    .input-action {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      color: var(--text-secondary);
+      border-radius: 10px;
+      background: transparent;
+      cursor: pointer;
+    }
+    .input-action:hover { color: var(--champagne-light); background: rgba(20, 24, 35, 0.36); }
+
+    .static-input { display: flex; min-height: 44px; align-items: center; padding: 9px 12px; color: #e6e2dd; border: 1px solid rgba(209, 219, 234, 0.18); border-radius: var(--radius-md); background: linear-gradient(180deg, rgba(76,75,77,.92), rgba(48,52,59,.97)); box-shadow: inset 3px 4px 8px rgba(5,7,11,.38); }
+    .static-input.demo-focus { color: var(--text-primary); border: 2px solid var(--blue-focus); background: linear-gradient(180deg, var(--steel-light), var(--steel-dark)); box-shadow: var(--glow-blue); }
+    .static-input.demo-error { color: var(--error-light); border-color: var(--error-light); }
+    .static-input.demo-success { color: var(--success-light); border-color: var(--success-light); }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .field-full { grid-column: 1 / -1; }
+    .form-status { min-height: 1.35rem; margin: 12px 0 0; color: var(--text-secondary); font-size: 0.82rem; }
+    .form-note { display: inline-flex; gap: 7px; align-items: center; color: var(--text-muted); font-size: 0.76rem; }
+
+    .choice-layout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    fieldset.choice-group { min-width: 0; margin: 0; padding: 18px; border: 1px solid rgba(209,219,234,.12); border-radius: var(--radius-lg); background: rgba(9,13,20,.30); }
+    .choice-group legend { padding: 0 8px; color: var(--text-warm); font-size: 0.84rem; font-weight: 600; }
+    .choice-list { display: grid; gap: 12px; }
+    .choice {
+      position: relative;
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr);
+      gap: 11px;
+      align-items: center;
+      min-height: 44px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .choice input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .choice-mark {
+      display: grid;
+      width: 24px;
+      height: 24px;
+      place-items: center;
+      color: var(--text-dark);
+      border: 1px solid rgba(252,246,221,.38);
+      border-radius: 7px;
+      background: linear-gradient(145deg, #77716d, #4d4b4d);
+      box-shadow: var(--shadow-level-1);
+      transition: background var(--duration-base), box-shadow var(--duration-base), transform var(--duration-fast);
+    }
+    .choice-mark .icon { width: 15px; height: 15px; opacity: 0; transform: scale(.6); transition: opacity var(--duration-fast), transform var(--duration-fast); }
+    .choice input:checked + .choice-mark { background: linear-gradient(145deg, var(--champagne-highlight), var(--champagne-mid)); box-shadow: var(--glow-gold); }
+    .choice input:checked + .choice-mark .icon { opacity: 1; transform: scale(1); }
+    .choice input:indeterminate + .choice-mark { background: linear-gradient(145deg, var(--champagne-highlight), var(--champagne-mid)); box-shadow: var(--glow-gold); }
+    .choice input:indeterminate + .choice-mark::after { width: 11px; height: 2px; content: ""; border-radius: 2px; background: var(--text-dark); }
+    .choice input:focus-visible + .choice-mark { outline: 2px solid var(--blue-focus); outline-offset: 3px; box-shadow: var(--glow-blue); }
+    .choice.is-error .choice-mark { outline: 2px solid var(--error-light); outline-offset: 2px; box-shadow: 0 0 0 4px rgba(217,143,134,.18); }
+    .choice input:disabled + .choice-mark, .choice input:disabled ~ .choice-text { opacity: .58; cursor: not-allowed; }
+    .choice:has(input:disabled) { cursor: not-allowed; }
+    .choice.radio .choice-mark { border-radius: 50%; }
+    .choice.radio .choice-mark::after { width: 10px; height: 10px; content: ""; border-radius: 50%; background: var(--text-dark); opacity: 0; transform: scale(.5); transition: opacity var(--duration-fast), transform var(--duration-fast); }
+    .choice.radio input:checked + .choice-mark::after { opacity: 1; transform: scale(1); }
+
+    .switch-row { display: flex; justify-content: space-between; gap: 14px; align-items: center; min-height: 44px; color: var(--text-secondary); cursor: pointer; }
+    .switch-row input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .switch-track { position: relative; width: 58px; height: 30px; flex: 0 0 58px; border: 1px solid rgba(252,246,221,.28); border-radius: var(--radius-pill); background: linear-gradient(180deg, #75716f, #4f4d50); box-shadow: inset 3px 4px 7px rgba(4,6,10,.42); transition: background var(--duration-base), box-shadow var(--duration-base); }
+    .switch-thumb { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border: 1px solid rgba(252,246,221,.68); border-radius: 50%; background: linear-gradient(145deg, #d9d3cc, #918b86); box-shadow: 0 3px 7px rgba(3,5,8,.50); transition: transform var(--duration-base) var(--ease-out); }
+    .switch-row input:checked + .switch-track { background: linear-gradient(180deg, #8ec8fb, #4b91da); box-shadow: var(--glow-blue), inset 2px 2px 5px rgba(10,38,74,.25); }
+    .switch-row input:checked + .switch-track .switch-thumb { transform: translateX(28px); }
+    .switch-row input:focus-visible + .switch-track { outline: 2px solid var(--blue-focus); outline-offset: 3px; }
+
+    .card-grid, .gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+    .showcase-card {
+      position: relative;
+      display: flex;
+      min-height: 0;
+      flex-direction: column;
+      padding: 22px;
+      border: 1px solid rgba(252,246,221,.28);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-level-2);
+      transition: transform var(--duration-slow) var(--ease-out), border-color var(--duration-base), box-shadow var(--duration-slow);
+    }
+    .showcase-card.steel { background: linear-gradient(145deg, rgba(89,108,131,.97), rgba(50,67,90,.98)); }
+    .showcase-card.taupe { color: #191b1f; background: linear-gradient(145deg, rgba(182,170,157,.99), rgba(146,135,124,.99)); }
+    .showcase-card.taupe p { color: #191b1f; }
+    .showcase-card.tactile-glass { background: linear-gradient(145deg, rgba(89,108,131,.93), rgba(32,37,47,.94)); }
+    .showcase-card:hover, .showcase-card:focus-within { transform: translateY(-3px); border-color: rgba(162,207,244,.58); box-shadow: var(--shadow-level-3), 0 0 22px rgba(87,178,249,.16); }
+    .showcase-card.is-selected { border: 2px solid var(--champagne-highlight); box-shadow: var(--shadow-level-3), var(--glow-gold); }
+    .card-top { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    .card-badge { display: inline-flex; min-height: 27px; align-items: center; padding: 4px 9px; color: var(--text-dark); font-family: var(--font-mono); font-size: .61rem; border-radius: var(--radius-pill); background: var(--champagne-light); }
+    .showcase-card p { margin: 0 0 24px; color: var(--text-secondary); font-size: .88rem; }
+    .showcase-card .btn { margin-top: auto; align-self: flex-start; }
+    .card-accordion-heading { margin: 0; }
+    .card-accordion-toggle {
+      display: flex;
+      width: 100%;
+      min-height: 44px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 0 14px;
+      color: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: left;
+      background: transparent;
+      cursor: pointer;
+    }
+    .card-accordion-toggle::after {
+      width: 9px;
+      height: 9px;
+      flex: 0 0 9px;
+      content: "";
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg);
+      transition: transform var(--duration-base) var(--ease-out);
+    }
+    .card-accordion-toggle[aria-expanded="true"]::after { transform: rotate(225deg); }
+    .card-accordion-panel { display: grid; flex: 1; align-content: start; }
+
+    .gallery-button { display: block; width: 100%; padding: 0; color: inherit; text-align: left; border-radius: var(--radius-lg); background: transparent; cursor: pointer; }
+    .gallery-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid rgba(252,246,221,.24); border-radius: var(--radius-lg); background: var(--steel-shadow); box-shadow: var(--shadow-level-2); }
+    .gallery-media svg { width: 100%; height: 100%; transition: transform var(--duration-slow) var(--ease-out), filter var(--duration-slow); }
+    .gallery-button:hover .gallery-media, .gallery-button:focus-visible .gallery-media { border-color: var(--blue-soft); box-shadow: var(--shadow-level-2), var(--glow-blue); }
+    .gallery-button:hover svg, .gallery-button:focus-visible svg { transform: scale(1.045); filter: saturate(1.10) brightness(1.04); }
+    .gallery-caption { display: flex; justify-content: space-between; gap: 12px; padding: 12px 3px 0; }
+    .gallery-caption strong { font-size: .88rem; }
+    .gallery-caption span { color: var(--text-muted); font-family: var(--font-mono); font-size: .66rem; }
+
+    .range-wrap { display: grid; gap: 16px; }
+    .range-head { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+    .range-value { min-width: 70px; padding: 7px 11px; color: var(--text-dark); font-family: var(--font-mono); text-align: center; border-radius: var(--radius-pill); background: linear-gradient(180deg, var(--champagne-highlight), var(--champagne-mid)); box-shadow: var(--glow-gold); }
+    .range-control { width: 100%; height: 28px; margin: 0; appearance: none; background: transparent; cursor: pointer; }
+    .range-control::-webkit-slider-runnable-track { height: 8px; border: 1px solid rgba(209,219,234,.15); border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--blue-active) 0 var(--range-fill, 50%), #363a42 var(--range-fill, 50%) 100%); box-shadow: inset 2px 3px 5px rgba(3,6,12,.52); }
+    .range-control::-moz-range-track { height: 8px; border: 1px solid rgba(209,219,234,.15); border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--blue-active) 0 var(--range-fill, 50%), #363a42 var(--range-fill, 50%) 100%); box-shadow: inset 2px 3px 5px rgba(3,6,12,.52); }
+    .range-control::-webkit-slider-thumb { width: 18px; height: 28px; margin-top: -11px; appearance: none; border: 1px solid var(--champagne-highlight); border-radius: 7px; background: linear-gradient(90deg, var(--champagne-dark), var(--champagne-highlight), var(--champagne)); box-shadow: var(--glow-gold); }
+    .range-control::-moz-range-thumb { width: 18px; height: 28px; border: 1px solid var(--champagne-highlight); border-radius: 7px; background: linear-gradient(90deg, var(--champagne-dark), var(--champagne-highlight), var(--champagne)); box-shadow: var(--glow-gold); }
+    .range-control:focus-visible { outline: 2px solid var(--blue-focus); outline-offset: 6px; border-radius: var(--radius-pill); }
+    .range-scale { display: flex; justify-content: space-between; color: var(--text-muted); font-family: var(--font-mono); font-size: .68rem; }
+
+    .progress-shell { display: grid; gap: 13px; }
+    .progress-meta { display: flex; justify-content: space-between; gap: 14px; color: var(--text-secondary); font-size: .82rem; }
+    .progress-meta output { color: var(--champagne-light); font-family: var(--font-mono); }
+    .progress-track { height: 12px; overflow: hidden; border: 1px solid rgba(209,219,234,.13); border-radius: var(--radius-pill); background: #34373e; box-shadow: inset 2px 3px 6px rgba(3,6,12,.56); }
+    .progress-fill { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--blue-active), #c7e9fb 66%, var(--champagne-light)); box-shadow: 0 0 12px rgba(87,178,249,.58), 0 0 18px rgba(224,199,144,.22); transition: width 70ms linear; }
+    .progress-track.is-complete .progress-fill { box-shadow: 0 0 14px rgba(212,234,211,.62), 0 0 20px rgba(224,199,144,.24); }
+
+    .system-grid { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 16px; }
+    .table-wrap { overflow-x: auto; border: 1px solid rgba(209,219,234,.12); border-radius: var(--radius-lg); }
+    table { width: 100%; min-width: 480px; border-collapse: collapse; color: var(--text-secondary); font-size: .82rem; }
+    caption { padding: 14px 16px; color: var(--text-warm); font-weight: 600; text-align: left; }
+    th, td { padding: 12px 14px; border-top: 1px solid rgba(209,219,234,.10); text-align: left; }
+    thead th { color: var(--text-muted); font-family: var(--font-mono); font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; }
+    tbody tr { transition: background var(--duration-base), box-shadow var(--duration-base); }
+    tbody tr:hover { background: rgba(138,182,229,.16); }
+    tbody tr.is-selected { background: rgba(204,177,125,.14); box-shadow: inset 3px 0 0 var(--champagne-light); }
+    tbody tr.is-disabled { opacity: .58; }
+
+    .empty-state { display: grid; min-height: 210px; place-items: center; padding: 26px; text-align: center; border: 1px solid rgba(252,246,221,.20); border-radius: var(--radius-lg); background: linear-gradient(145deg, #535152, #3f424b); box-shadow: var(--shadow-level-2); }
+    .empty-state .icon-tile { margin: 0 auto 17px; }
+    .empty-state p { max-width: 290px; margin: 0 0 18px; color: var(--text-warm); font-size: .84rem; }
+
+    .token-sidebar {
+      position: sticky;
+      top: calc(var(--header-height) + 28px);
+      scroll-margin-top: calc(var(--header-height) + 28px);
+      min-width: 0;
+      max-height: calc(100vh - var(--header-height) - 52px);
+      overflow: auto;
+      padding: 22px;
+      border: 1px solid rgba(252,246,221,.30);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(118,109,99,.93), rgba(49,51,58,.97) 42%, rgba(33,37,47,.99));
+      box-shadow: var(--shadow-level-3);
+      scrollbar-width: thin;
+      scrollbar-color: var(--champagne) transparent;
+    }
+    .token-sidebar h2 { font-size: 1.1rem; }
+    .token-intro { margin: 0 0 20px; color: #fcf6dd; font-size: .78rem; }
+    .token-group { padding: 16px 0; border-top: 1px solid rgba(252,246,221,.20); }
+    .token-group h3 { margin: 0 0 10px; color: var(--champagne-highlight); font-family: var(--font-mono); font-size: .67rem; letter-spacing: .08em; text-transform: uppercase; }
+    .token-list { display: grid; gap: 8px; margin: 0; }
+    .token-row { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 9px; align-items: center; min-width: 0; }
+    .swatch { width: 18px; height: 18px; border: 1px solid rgba(255,255,255,.32); border-radius: 6px; box-shadow: 0 2px 5px rgba(3,6,10,.30); }
+    .token-row div { min-width: 0; }
+    .token-name { display: block; color: #fffaf2; font-size: .58rem; overflow-wrap: anywhere; }
+    .token-value { display: block; color: #f7f3ed; font-family: var(--font-mono); font-size: .67rem; }
+    .token-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+    .token-pill { display: inline-flex; min-height: 29px; align-items: center; padding: 4px 8px; color: #fbf6ef; font-family: var(--font-mono); font-size: .64rem; border: 1px solid rgba(252,246,221,.22); border-radius: var(--radius-pill); background: rgba(15,19,27,.25); }
+    .shadow-demo { height: 24px; margin-top: 9px; border-radius: 7px; background: rgba(102,98,96,.78); }
+    .shadow-demo.level-1 { box-shadow: var(--shadow-level-1); }
+    .shadow-demo.level-2 { box-shadow: var(--shadow-level-2); }
+    .shadow-demo.level-3 { box-shadow: var(--shadow-level-3); }
+
+    dialog {
+      width: min(620px, calc(100% - 28px));
+      max-height: min(760px, calc(100vh - 28px));
+      max-height: min(760px, calc(100dvh - 28px));
+      overflow: hidden;
+      padding: 0;
+      color: var(--text-dark);
+      border: 1px solid rgba(252,246,221,.62);
+      border-radius: var(--radius-xl);
+      background: var(--taupe-base);
+      box-shadow: var(--shadow-level-3), var(--glow-gold);
+      opacity: 0;
+      transform: scale(.96) translateY(8px);
+      transition: opacity var(--duration-slow) var(--ease-out), transform var(--duration-slow) var(--ease-out), overlay var(--duration-slow) allow-discrete, display var(--duration-slow) allow-discrete;
+    }
+    dialog:has(.modal-preview:not([hidden])) {
+      height: min(760px, calc(100vh - 28px));
+      height: min(760px, calc(100dvh - 28px));
+    }
+    dialog[open] { opacity: 1; transform: scale(1) translateY(0); }
+    @starting-style { dialog[open] { opacity: 0; transform: scale(.96) translateY(8px); } }
+    dialog::backdrop { background: rgba(5,8,14,.76); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .modal-shell { display: grid; max-height: inherit; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; border-radius: inherit; background: linear-gradient(180deg, #c7beb1, #a8a098); }
+    dialog:has(.modal-preview:not([hidden])) .modal-shell { height: 100%; }
+    .modal-head { position: relative; z-index: 2; display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 18px 20px; color: var(--text-primary); background: linear-gradient(180deg, var(--steel-light), var(--steel-dark)); box-shadow: 0 7px 14px rgba(7,12,20,.28), inset 0 1px 0 rgba(255,255,255,.18); }
+    .modal-head h2 { margin: 0; font-size: 1.25rem; }
+    .modal-close { display: grid; width: 44px; height: 44px; place-items: center; color: var(--text-primary); border: 1px solid rgba(252,246,221,.34); border-radius: 12px; background: rgba(20,24,35,.26); cursor: pointer; }
+    .modal-close:hover { color: var(--text-dark); background: var(--champagne-highlight); }
+    .modal-body { min-height: 0; overflow: hidden; padding: 24px 22px 8px; }
+    dialog:has(.modal-preview:not([hidden])) .modal-body { display: grid; grid-template-rows: minmax(0, 1fr) auto; }
+    .modal-body p { margin: 0 0 14px; overflow-wrap: anywhere; }
+    .modal-preview { display: grid; min-width: 0; min-height: 0; height: 100%; place-items: center; margin: 0 0 14px; overflow: hidden; border-radius: var(--radius-lg); background: var(--steel-shadow); }
+    .modal-preview svg { width: 100%; height: 100%; max-height: 100%; }
+    .modal-actions { justify-content: flex-end; padding: 14px 22px 22px; }
+
+    .toast-region { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 300; display: grid; width: min(380px, calc(100% - 32px)); gap: 10px; pointer-events: none; }
+    .toast { display: grid; grid-template-columns: 34px minmax(0,1fr) 44px; gap: 11px; align-items: center; min-height: 64px; padding: 10px 8px 10px 13px; color: var(--text-dark); border: 1px solid rgba(252,246,221,.86); border-radius: var(--radius-md); background: linear-gradient(145deg, #eee5d6, #c8c1b6); box-shadow: var(--shadow-level-3), var(--glow-gold); pointer-events: auto; animation: toast-in var(--duration-slow) var(--ease-out); }
+    .toast[data-type="error"] { background: linear-gradient(145deg, #f3c2ba, #d98f86); }
+    .toast[data-type="success"] .toast-icon { color: #24402a; background: var(--success-light); }
+    .toast-icon { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid rgba(23,32,42,.22); border-radius: 50%; background: #d8d5cf; }
+    .toast p { margin: 0; font-size: .82rem; font-weight: 600; }
+    .toast button { display: grid; width: 44px; height: 44px; place-items: center; color: var(--text-dark); border-radius: 9px; background: transparent; cursor: pointer; }
+    .toast button:hover { background: rgba(23,32,42,.12); }
+    @keyframes toast-in { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+
+    .footer { position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 20px; padding: 24px clamp(22px,4vw,54px) 34px; color: var(--text-muted); font-size: .78rem; border-top: 1px solid rgba(209,219,234,.10); }
+    .footer code { font-family: var(--font-mono); color: var(--champagne-light); }
+
+    @supports ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
+      .showcase-card.tactile-glass {
+        background: linear-gradient(145deg, rgba(89,108,131,.76), rgba(32,37,47,.82));
+        backdrop-filter: blur(11px) saturate(118%);
+        -webkit-backdrop-filter: blur(11px) saturate(118%);
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .workbench { grid-template-columns: minmax(0, 1fr); }
+      .token-sidebar { position: relative; top: auto; order: -1; max-height: none; }
+      .token-sidebar .token-columns { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0 22px; }
+    }
+
+    @media (max-width: 920px) {
+      .hero { grid-template-columns: minmax(0,1fr); min-height: 0; }
+      .hero-visual { width: min(600px, 100%); margin: 0 auto; }
+      .card-grid, .gallery-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .choice-layout { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .choice-layout fieldset:last-child { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 767px) {
+      :root { --header-height: 62px; }
+      .site-shell { width: calc(100% - 16px); margin: 8px auto 20px; border-radius: var(--radius-xl); }
+      .topbar { top: 6px; min-height: 58px; margin: 7px; padding: 7px 8px 11px 12px; border-radius: 18px; }
+      .scroll-status { right: 48px; bottom: 4px; left: 12px; }
+      .brand-mark { width: 34px; height: 34px; flex-basis: 34px; }
+      .brand-text small { display: none; }
+      .menu-button { display: grid; }
+      .primary-nav {
+        position: fixed;
+        top: 78px;
+        right: 14px;
+        left: 14px;
+        z-index: 120;
+        display: grid;
+        gap: 7px;
+        margin: 0;
+        padding: 16px;
+        border: 1px solid rgba(252,246,221,.38);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(180deg, rgba(50,54,63,.99), rgba(20,24,35,.99));
+        box-shadow: var(--shadow-level-3), var(--glow-gold);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px) scale(.98);
+        transition: opacity var(--duration-slow), transform var(--duration-slow), visibility var(--duration-slow);
+      }
+      dialog { width: calc(100% - 16px); max-height: calc(100vh - 16px); max-height: calc(100dvh - 16px); border-radius: 18px; }
+      dialog:has(.modal-preview:not([hidden])) { height: calc(100vh - 16px); height: calc(100dvh - 16px); }
+      .modal-head { padding: 12px 14px; }
+      .modal-head h2 { font-size: 1rem; }
+      .modal-body { padding: 14px 14px 4px; }
+      .modal-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 10px 14px 14px; }
+      .modal-actions .btn { min-width: 0; width: 100%; }
+      .primary-nav[data-open="true"] { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+      .nav-link { width: 100%; justify-content: flex-start; min-height: 46px; }
+      .primary-nav .btn { width: 100%; }
+      .hero { gap: 26px; padding: 52px 20px 66px; }
+      .hero-visual { min-height: 360px; }
+      .floating-card { width: 82%; padding: 18px; }
+      .floating-card.cool { top: 20px; }
+      .floating-card.warm { bottom: 22px; }
+      .mini-metrics { grid-template-columns: repeat(2,1fr); }
+      .mini-metrics .mini-metric:last-child { display: none; }
+      .workbench { padding: 0 12px 48px; }
+      .component-section { padding: 22px 16px; border-radius: var(--radius-lg); }
+      .section-head { gap: 12px; }
+      .demo-grid, .form-grid, .choice-layout, .system-grid { grid-template-columns: minmax(0,1fr); }
+      .choice-layout fieldset:last-child, .field-full { grid-column: auto; }
+      .card-grid, .gallery-grid { grid-template-columns: minmax(0,1fr); }
+      .state-item { grid-template-columns: minmax(62px,.32fr) minmax(0,1fr); }
+      .token-sidebar { padding: 18px; }
+      .token-sidebar .token-columns { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0 16px; }
+      .footer { flex-direction: column; padding-inline: 20px; }
+    }
+
+    @media (max-width: 430px) {
+      .brand-text strong { font-size: .78rem; }
+      h1 { font-size: clamp(2.25rem, 12vw, 3rem); }
+      .hero-actions .btn { width: 100%; }
+      .hero-visual { min-height: 330px; }
+      .floating-card { width: 88%; }
+      .floating-card.warm { right: 0; }
+      .floating-token { right: 2%; }
+      .demo-stage, .state-board, .subpanel { padding: 16px; }
+      .button-row .btn:not(.btn-icon), .inline-actions .btn:not(.btn-icon) { width: 100%; }
+      .token-sidebar .token-columns { grid-template-columns: minmax(0,1fr); }
+      .range-head { align-items: flex-start; }
+    }
+
+    @media (hover: none) {
+      .btn:hover:not(:disabled):not(.is-loading) { color: var(--text-primary); border-color: rgba(252,246,221,.54); background: linear-gradient(180deg, #4f6680, #384e69 54%, #2c405a); box-shadow: var(--shadow-level-1); transform: none; }
+      .gallery-caption span { color: var(--champagne-light); }
+      .showcase-card:hover { transform: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .spinner { animation: none; border-color: currentColor; border-right-color: transparent; }
+      dialog { transform: none; }
+    }
+
+    @media (prefers-reduced-transparency: reduce) {
+      .topbar, .showcase-card.tactile-glass { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--steel-dark); }
+    }
+
+    @media (forced-colors: active) {
+      :root { --text-primary: CanvasText; --text-secondary: CanvasText; --text-muted: CanvasText; }
+      body, .site-shell, .component-section, .demo-stage, .state-board, .subpanel, .token-sidebar, .showcase-card, .topbar { color: CanvasText; background: Canvas; border: 1px solid CanvasText; box-shadow: none; }
+      .btn, .menu-button, .modal-close { color: ButtonText; background: ButtonFace; border: 1px solid ButtonText; box-shadow: none; }
+      .btn:focus-visible, :focus-visible { outline: 3px solid Highlight; box-shadow: none; }
+      .input-control, .static-input, .switch-track, .choice-mark { color: CanvasText; background: Canvas; border: 1px solid CanvasText; box-shadow: none; }
+      .choice input:checked + .choice-mark, .switch-row input:checked + .switch-track { color: HighlightText; background: Highlight; }
+      .showcase-card.is-selected, tbody tr.is-selected { border: 3px solid Highlight; box-shadow: none; }
+      .progress-fill, .scroll-status-fill { background: Highlight; box-shadow: none; }
+      .scroll-status { border: 1px solid CanvasText; background: Canvas; box-shadow: none; }
+      .icon { forced-color-adjust: auto; }
+    }
+  </style>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Перейти к основному содержимому</a>
+
+  <!-- Единый inline SVG-спрайт: внешние иконки и сетевые запросы не используются. -->
+  <svg class="visually-hidden" aria-hidden="true" width="0" height="0" focusable="false">
+    <symbol id="icon-logo" viewBox="0 0 24 24">
+      <path d="M12 2.7 20 7.3v9.4L12 21.3 4 16.7V7.3L12 2.7Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <path d="m8 9.2 4-2.3 4 2.3-4 2.3L8 9.2Zm0 3.2 4 2.3 4-2.3m-4 2.3v3.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-layers" viewBox="0 0 24 24">
+      <path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z" fill="currentColor" opacity=".9"/>
+      <path d="m4 11 8 4.5 8-4.5M4 15.5l8 4.5 8-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-spark" viewBox="0 0 24 24">
+      <path d="M12 2.5c.6 5.1 3.4 7.9 8.5 8.5-5.1.6-7.9 3.4-8.5 8.5-.6-5.1-3.4-7.9-8.5-8.5C8.6 10.4 11.4 7.6 12 2.5Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24">
+      <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-reset" viewBox="0 0 24 24">
+      <path d="M5.1 8.3A8 8 0 1 1 4 14m1.1-5.7V4m0 4.3h4.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24">
+      <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24">
+      <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24">
+      <path d="m5 12.5 4.3 4.3L19 7.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-eye" viewBox="0 0 24 24">
+      <path d="M2.8 12s3.3-5.4 9.2-5.4 9.2 5.4 9.2 5.4-3.3 5.4-9.2 5.4S2.8 12 2.8 12Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <circle cx="12" cy="12" r="2.3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+    </symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M5 20c.5-4 3-6 7-6s6.5 2 7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24">
+      <rect x="3" y="5.5" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <path d="m4.5 7 7.5 6 7.5-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-message" viewBox="0 0 24 24">
+      <path d="M4 4.5h16v12H9l-5 4v-16Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M8 9h8M8 12.5h5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-image" viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <circle cx="8.2" cy="9" r="1.5" fill="currentColor"/>
+      <path d="m5.5 17 4.5-4 3 2.5 2.5-2 3 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-sliders" viewBox="0 0 24 24">
+      <path d="M4 7h8m4 0h4M4 12h3m4 0h9M4 17h10m4 0h2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="14" cy="7" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <circle cx="9" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <circle cx="16" cy="17" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+    </symbol>
+    <symbol id="icon-bell" viewBox="0 0 24 24">
+      <path d="M6 16.5h12l-1.5-2.2V10a4.5 4.5 0 0 0-9 0v4.3L6 16.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M10 19h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-code" viewBox="0 0 24 24">
+      <path d="m9 6-6 6 6 6m6-12 6 6-6 6m-1.5-14-3 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
+
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Тактильный интерфейс — к началу страницы">
+        <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#icon-logo"></use></svg></span>
+        <span class="brand-text"><strong>Тактильный интерфейс</strong><small>УРОК / 3-2</small></span>
+      </a>
+
+      <nav class="primary-nav" id="primaryNav" aria-label="Основная навигация" data-open="false">
+        <a class="nav-link" href="#buttons" aria-current="location">Кнопки</a>
+        <a class="nav-link" href="#inputs">Поля</a>
+        <a class="nav-link" href="#choices">Выбор</a>
+        <a class="nav-link" href="#cards">Карточки</a>
+        <a class="nav-link" href="#motion">Динамика</a>
+        <button class="btn btn-ghost btn-small" id="resetAll" type="button">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-reset"></use></svg>
+          Сбросить
+        </button>
+      </nav>
+
+      <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Открыть меню">
+        <svg class="icon icon-menu" aria-hidden="true"><use href="#icon-menu"></use></svg>
+        <svg class="icon icon-close" aria-hidden="true"><use href="#icon-close"></use></svg>
+      </button>
+
+      <div class="scroll-status" id="scrollStatus" role="progressbar" aria-label="Прогресс просмотра страницы" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" title="Просмотрено 0% страницы">
+        <span class="scroll-status-fill" id="scrollStatusFill" aria-hidden="true"></span>
+        <output class="scroll-status-value" id="scrollStatusValue">0%</output>
+      </div>
+    </header>
+
+    <div class="nav-backdrop" id="navBackdrop" hidden></div>
+
+    <div id="pageContent">
+      <main id="main-content">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">Интерактивная витрина компонентов</p>
+            <h1 id="hero-title">Интерфейс, который ощущается <span class="accent">тактильно</span></h1>
+            <p>Одностраничная витрина неоскевоморфных компонентов: холодная сталь, графит, мягкий свет и физически убедимые состояния — без библиотек и внешних ресурсов.</p>
+            <ul class="tech-list" aria-label="Технологии и свойства">
+              <li class="tech-badge">Чистый <abbr title="HTML — язык разметки; задаёт структуру и содержимое страницы.">HTML</abbr></li>
+              <li class="tech-badge">Переменные <abbr title="CSS — язык стилей; отвечает за оформление, адаптивность и анимации страницы.">CSS</abbr></li>
+              <li class="tech-badge">Нативный <abbr title="JavaScript — язык программирования; обеспечивает интерактивность, валидацию и динамические состояния.">JavaScript</abbr></li>
+              <li class="tech-badge">Адаптивность от 320 пикс.</li>
+              <li class="tech-badge">Доступно с клавиатуры</li>
+            </ul>
+            <div class="hero-actions">
+              <a class="btn btn-secondary" href="#buttons">
+                Исследовать компоненты
+                <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow"></use></svg>
+              </a>
+              <button class="btn btn-ghost" type="button" data-open-modal="intro">
+                О концепции
+              </button>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-label="Пример тактильных карточек">
+            <span class="floating-token">глубина / 03</span>
+            <article class="floating-card cool">
+              <div class="floating-card-head">
+                <span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#icon-layers"></use></svg></span>
+                <div><h3>Холодная поверхность</h3><p>Многослойный стальной интерфейс</p></div>
+              </div>
+              <div class="mini-metrics" aria-label="Параметры поверхности">
+                <span class="mini-metric" title="Радиус задаёт степень скругления углов компонента."><strong>18 пикс.</strong>радиус</span>
+                <span class="mini-metric" title="Глубина показывает визуальную высоту компонента над фоном."><strong>24 пикс.</strong>глубина</span>
+                <span class="mini-metric" title="Длительность определяет скорость перехода между состояниями."><strong>190 мс</strong>анимация</span>
+              </div>
+            </article>
+            <article class="floating-card warm">
+              <div class="floating-card-head">
+                <span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#icon-spark"></use></svg></span>
+                <div><h3>Тёплый сигнал</h3><p>Световой акцент цвета шампань</p></div>
+              </div>
+              <div class="mini-metrics" aria-label="Параметры акцента">
+                <span class="mini-metric" title="HEX-код задаёт цвет светового акцента."><strong>#FCF6DD</strong>свет</span>
+                <span class="mini-metric" title="Толщина контура показывает элемент, находящийся в фокусе клавиатуры."><strong>2 пикс.</strong>фокус</span>
+                <span class="mini-metric"><strong><abbr title="AAA — наивысший уровень контрастности по рекомендациям WCAG; используется для максимально читаемых подписей.">AAA</abbr></strong>подписи</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <div class="workbench">
+          <div class="content-column">
+            <section class="component-section" id="buttons" aria-labelledby="buttons-title">
+              <div class="section-head">
+                <div>
+                  <h2 id="buttons-title">Кнопки</h2>
+                  <p>Рельеф формируется внешней тенью, внутренним бликом и мягким свечением. Наведение усиливает холодный свет, нажатие визуально утапливает контрол.</p>
+                </div>
+                <span class="section-index">01 / 08</span>
+              </div>
+
+              <div class="demo-grid">
+                <div class="demo-stage">
+                  <h3>Интерактивные варианты</h3>
+                  <div class="button-row">
+                    <button class="btn" type="button" data-toast="Основное действие выполнено" data-toast-type="success">
+                      Основная
+                      <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow"></use></svg>
+                    </button>
+                    <button class="btn btn-secondary" type="button" data-open-modal="component">Открыть окно</button>
+                    <button class="btn btn-ghost" type="button" data-toast="Нейтральное уведомление показано">Прозрачная</button>
+                    <button class="btn btn-icon" type="button" aria-label="Показать уведомление" data-toast="Иконка-кнопка активирована">
+                      <svg class="icon" aria-hidden="true"><use href="#icon-bell"></use></svg>
+                    </button>
+                  </div>
+                  <p class="field-hint">Используйте <kbd title="Tab — переход к следующему интерактивному элементу.">Tab</kbd>, <kbd title="Enter — активация выбранной кнопки или ссылки.">Enter</kbd> и <kbd title="Space — нажатие кнопки или переключение выбранного элемента.">Space</kbd>: все элементы доступны с клавиатуры.</p>
+                </div>
+
+                <div class="state-board" aria-label="Визуальные состояния кнопки">
+                  <h3>Матрица состояний</h3>
+                  <div class="state-list">
+                    <div class="state-item"><span class="state-label">По умолчанию</span><button class="btn" type="button" tabindex="-1">Действие</button></div>
+                    <div class="state-item"><span class="state-label">Наведение</span><button class="btn demo-hover" type="button" tabindex="-1">Действие</button></div>
+                    <div class="state-item"><span class="state-label">Нажатие</span><button class="btn demo-pressed" type="button" tabindex="-1">Действие</button></div>
+                    <div class="state-item"><span class="state-label">Недоступно</span><button class="btn" type="button" disabled>Недоступно</button></div>
+                    <div class="state-item">
+                      <span class="state-label">Загрузка</span>
+                      <button class="btn" id="loadingButton" type="button">
+                        <span class="spinner" aria-hidden="true"></span>
+                        <span data-loading-label>Запустить</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="component-section" id="inputs" aria-labelledby="inputs-title">
+              <div class="section-head">
+                <div>
+                  <h2 id="inputs-title">Поля ввода</h2>
+                  <p>Углублённая поверхность, всегда заметное фокус-кольцо и явные сообщения проверки. Цвет никогда не является единственным признаком ошибки.</p>
+                </div>
+                <span class="section-index">02 / 08</span>
+              </div>
+
+              <div class="demo-grid">
+                <div class="demo-stage">
+                  <h3>Живые контролы</h3>
+                  <div class="field-stack">
+                    <div class="field">
+                      <label for="demoEmail">Рабочая почта</label>
+                      <input class="input-control" id="demoEmail" name="demoEmail" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="name@example.ru" aria-describedby="demoEmailHint demoEmailError" data-demo-email>
+                      <p class="field-hint" id="demoEmailHint">Проверка запускается после потери фокуса.</p>
+                      <p class="field-error" id="demoEmailError" aria-live="polite"></p>
+                    </div>
+                    <div class="field">
+                      <label for="demoPassword">Пароль</label>
+                      <div class="input-wrap input-with-action">
+                        <input class="input-control" id="demoPassword" name="demoPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Не менее 8 символов">
+                        <button class="input-action" id="passwordToggle" type="button" aria-label="Показать пароль" aria-pressed="false">
+                          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-eye"></use></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label for="demoSelect">Роль в команде</label>
+                      <select class="input-control" id="demoSelect" name="demoSelect">
+                        <option value="">Выберите роль</option>
+                        <option value="designer">Дизайнер интерфейсов и пользовательского опыта</option>
+                        <option value="frontend">Фронтенд-разработчик</option>
+                        <option value="product">Продакт-менеджер</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="state-board" aria-label="Визуальные состояния поля ввода">
+                  <h3>Состояния поля</h3>
+                  <div class="state-list">
+                    <div class="state-item"><span class="state-label">По умолчанию</span><span class="static-input">Введите значение</span></div>
+                    <div class="state-item"><span class="state-label">Фокус</span><span class="static-input demo-focus">Курсор активен</span></div>
+                    <div class="state-item"><span class="state-label">Успешно</span><span class="static-input demo-success">✓ Значение принято</span></div>
+                    <div class="state-item"><span class="state-label">Ошибка</span><span class="static-input demo-error">! Проверьте формат</span></div>
+                    <div class="state-item"><span class="state-label">Недоступно</span><span class="static-input" aria-disabled="true">Поле недоступно</span></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="component-section" id="form" aria-labelledby="form-title">
+              <div class="section-head">
+                <div>
+                  <h2 id="form-title">Форма обратной связи</h2>
+                  <p>Мок-отправка демонстрирует валидацию пустых и некорректных значений, состояние загрузки и успешный ответ — без передачи данных в сеть.</p>
+                </div>
+                <span class="section-index">03 / 08</span>
+              </div>
+
+              <form id="feedbackForm" novalidate>
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="feedbackName">Имя <span aria-hidden="true">*</span></label>
+                    <input class="input-control" id="feedbackName" name="name" type="text" autocomplete="name" minlength="2" maxlength="60" required aria-describedby="feedbackNameError" placeholder="Анна">
+                    <p class="field-error" id="feedbackNameError" aria-live="polite"></p>
+                  </div>
+                  <div class="field">
+                    <label for="feedbackEmail">Электронная почта <span aria-hidden="true">*</span></label>
+                    <input class="input-control" id="feedbackEmail" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" required aria-describedby="feedbackEmailError" placeholder="anna@example.ru">
+                    <p class="field-error" id="feedbackEmailError" aria-live="polite"></p>
+                  </div>
+                  <div class="field field-full">
+                    <label for="feedbackMessage">Сообщение <span aria-hidden="true">*</span></label>
+                    <textarea class="input-control" id="feedbackMessage" name="message" minlength="10" maxlength="1000" required aria-describedby="feedbackMessageHint feedbackMessageError" placeholder="Расскажите, какой компонент хотите добавить…"></textarea>
+                    <p class="field-hint" id="feedbackMessageHint">От 10 до 1000 символов.</p>
+                    <p class="field-error" id="feedbackMessageError" aria-live="polite"></p>
+                  </div>
+                  <div class="field field-full">
+                    <label class="choice" for="feedbackConsent">
+                      <input id="feedbackConsent" name="consent" type="checkbox" required aria-describedby="feedbackConsentError">
+                      <span class="choice-mark" aria-hidden="true"><svg class="icon"><use href="#icon-check"></use></svg></span>
+                      <span class="choice-text">Согласен на локальную демонстрационную обработку данных <span aria-hidden="true">*</span></span>
+                    </label>
+                    <p class="field-error" id="feedbackConsentError" aria-live="polite"></p>
+                  </div>
+                </div>
+                <div class="inline-actions">
+                  <button class="btn btn-secondary" id="formSubmit" type="submit">
+                    <span class="spinner" aria-hidden="true"></span>
+                    <span data-submit-label>Отправить сообщение</span>
+                  </button>
+                  <button class="btn btn-ghost" type="reset">Очистить</button>
+                  <span class="form-note"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-code"></use></svg>Запрос эмулируется локально</span>
+                </div>
+                <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+              </form>
+            </section>
+
+            <section class="component-section" id="choices" aria-labelledby="choices-title">
+              <div class="section-head">
+                <div>
+                  <h2 id="choices-title">Чекбоксы, радио и переключатели</h2>
+                  <p>Полностью кастомная графика поверх нативных контролов: корректная семантика сохранена, области нажатия подходят для сенсорных экранов.</p>
+                </div>
+                <span class="section-index">04 / 08</span>
+              </div>
+
+              <div class="choice-layout">
+                <fieldset class="choice-group">
+                  <legend>Состав набора</legend>
+                  <div class="choice-list">
+                    <label class="choice" for="choiceComponents">
+                      <input id="choiceComponents" type="checkbox" checked>
+                      <span class="choice-mark" aria-hidden="true"><svg class="icon"><use href="#icon-check"></use></svg></span>
+                      <span class="choice-text">Компоненты</span>
+                    </label>
+                    <label class="choice" for="choiceTokens">
+                      <input id="choiceTokens" type="checkbox">
+                      <span class="choice-mark" aria-hidden="true"><svg class="icon"><use href="#icon-check"></use></svg></span>
+                      <span class="choice-text"><abbr title="Токены дизайна — именованные значения цветов, размеров и эффектов; используются для единообразия интерфейса.">Токены дизайна</abbr></span>
+                    </label>
+                    <label class="choice" for="choiceMixed">
+                      <input id="choiceMixed" type="checkbox">
+                      <span class="choice-mark" aria-hidden="true"><svg class="icon"><use href="#icon-check"></use></svg></span>
+                      <span class="choice-text">Частичный выбор</span>
+                    </label>
+                    <label class="choice" for="choiceDisabled">
+                      <input id="choiceDisabled" type="checkbox" disabled>
+                      <span class="choice-mark" aria-hidden="true"><svg class="icon"><use href="#icon-check"></use></svg></span>
+                      <span class="choice-text">Недоступно / выключено</span>
+                    </label>
+                    <label class="choice" for="choiceDisabledChecked">
+                      <input id="choiceDisabledChecked" type="checkbox" checked disabled>
+                      <span class="choice-mark" aria-hidden="true"><svg class="icon"><use href="#icon-check"></use></svg></span>
+                      <span class="choice-text">Недоступно / включено</span>
+                    </label>
+                  </div>
+                </fieldset>
+
+                <fieldset class="choice-group">
+                  <legend>Плотность интерфейса</legend>
+                  <div class="choice-list">
+                    <label class="choice radio" for="densitySoft">
+                      <input id="densitySoft" name="density" type="radio" value="soft" checked>
+                      <span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text">Мягкая</span>
+                    </label>
+                    <label class="choice radio" for="densityBalanced">
+                      <input id="densityBalanced" name="density" type="radio" value="balanced">
+                      <span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text">Сбалансированная</span>
+                    </label>
+                    <label class="choice radio" for="densityCompact">
+                      <input id="densityCompact" name="density" type="radio" value="compact">
+                      <span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text">Компактная</span>
+                    </label>
+                  </div>
+                </fieldset>
+
+                <fieldset class="choice-group">
+                  <legend>Поведение</legend>
+                  <div class="choice-list">
+                    <label class="switch-row" for="switchGlow">
+                      <span>Мягкое свечение</span>
+                      <input id="switchGlow" type="checkbox" checked>
+                      <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                    </label>
+                    <label class="switch-row" for="switchMotion">
+                      <span>Микроанимации</span>
+                      <input id="switchMotion" type="checkbox" checked>
+                      <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                    </label>
+                    <label class="switch-row" for="switchAlerts">
+                      <span>Уведомления</span>
+                      <input id="switchAlerts" type="checkbox">
+                      <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+            </section>
+
+            <section class="component-section" id="cards" aria-labelledby="cards-title">
+              <div class="section-head">
+                <div>
+                  <h2 id="cards-title">Карточки из гибридного тактильного стекла</h2>
+                  <p>Три уровня материала: холодная сталь, тёплая серо-коричневая поверхность и полупрозрачный слой. Стеклянный эффект сохраняет плотность и глубину неоскевоморфизма.</p>
+                </div>
+                <span class="section-index">05 / 08</span>
+              </div>
+
+              <ul class="card-grid" aria-label="Варианты карточек">
+                <li>
+                  <article class="showcase-card steel" data-card>
+                    <div class="card-top">
+                      <span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#icon-layers"></use></svg></span>
+                      <span class="card-badge">СТАЛЬ / 01</span>
+                    </div>
+                    <h3 class="card-accordion-heading">
+                      <button class="card-accordion-toggle" id="card-toggle-steel" type="button" data-card-accordion aria-expanded="true" aria-controls="card-panel-steel">Холодный рельеф</button>
+                    </h3>
+                    <div class="card-accordion-panel" id="card-panel-steel" role="region" aria-labelledby="card-toggle-steel">
+                      <p>Выраженная внешняя тень и внутренний верхний блик создают ощущение тяжёлой металлической панели.</p>
+                      <button class="btn btn-small" type="button" data-select-card aria-pressed="false">Выбрать</button>
+                    </div>
+                  </article>
+                </li>
+                <li>
+                  <article class="showcase-card taupe" data-card>
+                    <div class="card-top">
+                      <span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#icon-spark"></use></svg></span>
+                      <span class="card-badge">ТЕПЛО / 02</span>
+                    </div>
+                    <h3 class="card-accordion-heading">
+                      <button class="card-accordion-toggle" id="card-toggle-taupe" type="button" data-card-accordion aria-expanded="false" aria-controls="card-panel-taupe">Тёплый контраст</button>
+                    </h3>
+                    <div class="card-accordion-panel" id="card-panel-taupe" role="region" aria-labelledby="card-toggle-taupe" hidden>
+                      <p>Тёплая поверхность работает как контрастная зона для ключевого предложения или важного статуса.</p>
+                      <button class="btn btn-small" type="button" data-select-card aria-pressed="false">Выбрать</button>
+                    </div>
+                  </article>
+                </li>
+                <li>
+                  <article class="showcase-card tactile-glass" data-card>
+                    <div class="card-top">
+                      <span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#icon-logo"></use></svg></span>
+                      <span class="card-badge">СТЕКЛО / 03</span>
+                    </div>
+                    <h3 class="card-accordion-heading">
+                      <button class="card-accordion-toggle" id="card-toggle-glass" type="button" data-card-accordion aria-expanded="false" aria-controls="card-panel-glass">Тактильный гибрид</button>
+                    </h3>
+                    <div class="card-accordion-panel" id="card-panel-glass" role="region" aria-labelledby="card-toggle-glass" hidden>
+                      <p>Контролируемая прозрачность, размытие фона и плотная рамка не дают стеклянному эффекту потерять читаемость.</p>
+                      <button class="btn btn-small" type="button" data-select-card aria-pressed="false">Выбрать</button>
+                    </div>
+                  </article>
+                </li>
+              </ul>
+            </section>
+
+            <section class="component-section" id="gallery" aria-labelledby="gallery-title">
+              <div class="section-head">
+                <div>
+                  <h2 id="gallery-title">Галерея материалов</h2>
+                  <p>Абстрактная графика создаётся как встроенная <abbr title="SVG — формат векторной графики; используется для чётких масштабируемых иллюстраций без внешних файлов.">SVG-графика</abbr>. При наведении изображение приближается и получает холодное свечение; по нажатию открывается полноразмерный просмотр.</p>
+                </div>
+                <span class="section-index">06 / 08</span>
+              </div>
+
+              <ul class="gallery-grid" aria-label="Галерея абстрактных материалов">
+                <li>
+                  <button class="gallery-button" type="button" data-gallery-title="Стальная орбита" data-gallery-caption="Холодные концентрические слои и акцент цвета шампань.">
+                    <span class="gallery-media">
+                      <svg viewBox="0 0 400 300" role="img" aria-label="Абстрактные металлические окружности">
+                        <defs><radialGradient id="gallery-g1"><stop stop-color="#8ab6e5"/><stop offset=".42" stop-color="#40546b"/><stop offset="1" stop-color="#141823"/></radialGradient></defs>
+                        <rect width="400" height="300" fill="#1d232c"/><circle cx="205" cy="145" r="118" fill="url(#gallery-g1)"/><circle cx="205" cy="145" r="72" fill="none" stroke="#fcf6dd" stroke-opacity=".65" stroke-width="2"/><circle cx="205" cy="145" r="36" fill="#233040"/><path d="M54 238c94-41 186-21 292-111" fill="none" stroke="#ccb17d" stroke-width="7" stroke-linecap="round" opacity=".78"/>
+                      </svg>
+                    </span>
+                    <span class="gallery-caption"><strong>Стальная орбита</strong><span>01 / ХОЛОД</span></span>
+                  </button>
+                </li>
+                <li>
+                  <button class="gallery-button" type="button" data-gallery-title="Графитовая волна" data-gallery-caption="Многослойная волна с глубокими графитовыми тенями.">
+                    <span class="gallery-media">
+                      <svg viewBox="0 0 400 300" role="img" aria-label="Абстрактные графитовые волны">
+                        <defs><linearGradient id="gallery-g2" x2="1" y2="1"><stop stop-color="#596c83"/><stop offset=".55" stop-color="#2a2c33"/><stop offset="1" stop-color="#0b0e15"/></linearGradient></defs>
+                        <rect width="400" height="300" fill="url(#gallery-g2)"/><path d="M-18 208C76 85 151 260 243 126S405 72 430 43" fill="none" stroke="#a2cff4" stroke-opacity=".52" stroke-width="46"/><path d="M-18 208C76 85 151 260 243 126S405 72 430 43" fill="none" stroke="#141823" stroke-width="20"/><circle cx="311" cy="79" r="18" fill="#f3e0ac" opacity=".9"/>
+                      </svg>
+                    </span>
+                    <span class="gallery-caption"><strong>Графитовая волна</strong><span>02 / ГЛУБИНА</span></span>
+                  </button>
+                </li>
+                <li>
+                  <button class="gallery-button" type="button" data-gallery-title="Серо-коричневый монолит" data-gallery-caption="Тёплая монолитная форма на холодном фоне.">
+                    <span class="gallery-media">
+                      <svg viewBox="0 0 400 300" role="img" aria-label="Тёплая объёмная форма">
+                        <defs><linearGradient id="gallery-g3" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c5baad"/><stop offset=".5" stop-color="#7b726b"/><stop offset="1" stop-color="#423c36"/></linearGradient></defs>
+                        <rect width="400" height="300" fill="#141823"/><path d="m90 73 176-34 53 191-185 31Z" fill="url(#gallery-g3)"/><path d="m90 73 44 188-53-36-30-130Z" fill="#32435a"/><path d="m266 39 53 191 31-57-35-122Z" fill="#596c83"/><path d="m126 166 96-19" stroke="#fcf6dd" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+                      </svg>
+                    </span>
+                    <span class="gallery-caption"><strong>Серо-коричневый монолит</strong><span>03 / ТЕПЛО</span></span>
+                  </button>
+                </li>
+                <li>
+                  <button class="gallery-button" type="button" data-gallery-title="Луч фокуса" data-gallery-caption="Сценарий фокус-состояния с холодным световым кольцом.">
+                    <span class="gallery-media">
+                      <svg viewBox="0 0 400 300" role="img" aria-label="Световой луч и прямоугольный фокус">
+                        <defs><radialGradient id="gallery-g4"><stop stop-color="#edf8f6" stop-opacity=".88"/><stop offset=".32" stop-color="#57b2f9" stop-opacity=".48"/><stop offset="1" stop-color="#141823" stop-opacity="0"/></radialGradient></defs>
+                        <rect width="400" height="300" fill="#171c27"/><ellipse cx="210" cy="152" rx="185" ry="132" fill="url(#gallery-g4)"/><rect x="82" y="91" width="236" height="121" rx="25" fill="#32435a" stroke="#edf8f6" stroke-width="3"/><rect x="111" y="121" width="178" height="16" rx="8" fill="#a2cff4" opacity=".7"/><rect x="111" y="155" width="112" height="13" rx="6.5" fill="#d1dbea" opacity=".35"/>
+                      </svg>
+                    </span>
+                    <span class="gallery-caption"><strong>Луч фокуса</strong><span>04 / ФОКУС</span></span>
+                  </button>
+                </li>
+                <li>
+                  <button class="gallery-button" type="button" data-gallery-title="Узел цвета шампань" data-gallery-caption="Точечный тёплый сигнал внутри холодной структуры.">
+                    <span class="gallery-media">
+                      <svg viewBox="0 0 400 300" role="img" aria-label="Сетка с тёплым светящимся узлом">
+                        <defs><radialGradient id="gallery-g5"><stop stop-color="#fcf6dd"/><stop offset=".34" stop-color="#e0c790"/><stop offset="1" stop-color="#968568" stop-opacity="0"/></radialGradient></defs>
+                        <rect width="400" height="300" fill="#1d232c"/><g stroke="#596c83" stroke-width="2" opacity=".55"><path d="M42 58h316M42 108h316M42 158h316M42 208h316M92 30v240M158 30v240M224 30v240M290 30v240"/></g><circle cx="224" cy="158" r="68" fill="url(#gallery-g5)"/><circle cx="224" cy="158" r="14" fill="#fcf6dd"/><circle cx="92" cy="58" r="7" fill="#8ab6e5"/>
+                      </svg>
+                    </span>
+                    <span class="gallery-caption"><strong>Узел цвета шампань</strong><span>05 / СИГНАЛ</span></span>
+                  </button>
+                </li>
+                <li>
+                  <button class="gallery-button" type="button" data-gallery-title="Стеклянные слои" data-gallery-caption="Полупрозрачные слои с контролируемой плотностью.">
+                    <span class="gallery-media">
+                      <svg viewBox="0 0 400 300" role="img" aria-label="Полупрозрачные наклонные слои">
+                        <defs><linearGradient id="gallery-g6" x2="1" y2="1"><stop stop-color="#a2cff4" stop-opacity=".78"/><stop offset="1" stop-color="#32435a" stop-opacity=".24"/></linearGradient></defs>
+                        <rect width="400" height="300" fill="#0b0e15"/><rect x="44" y="42" width="250" height="168" rx="28" fill="url(#gallery-g6)" stroke="#d1dbea" stroke-opacity=".52" transform="rotate(-7 44 42)"/><rect x="106" y="87" width="250" height="168" rx="28" fill="#596c83" fill-opacity=".64" stroke="#fcf6dd" stroke-opacity=".42" transform="rotate(8 106 87)"/><path d="M134 135h132M134 164h86" stroke="#fcf6dd" stroke-width="8" stroke-linecap="round" opacity=".6"/>
+                      </svg>
+                    </span>
+                    <span class="gallery-caption"><strong>Стеклянные слои</strong><span>06 / СТЕКЛО</span></span>
+                  </button>
+                </li>
+              </ul>
+            </section>
+
+            <section class="component-section" id="motion" aria-labelledby="motion-title">
+              <div class="section-head">
+                <div>
+                  <h2 id="motion-title">Слайдеры и прогресс</h2>
+                  <p>Функциональный ползунок обновляет текущее значение без задержки. Индикатор прогресса запускается при загрузке и может быть повторно запущен вручную.</p>
+                </div>
+                <span class="section-index">07 / 08</span>
+              </div>
+
+              <div class="demo-grid">
+                <div class="demo-stage">
+                  <h3>Интенсивность свечения</h3>
+                  <div class="range-wrap">
+                    <div class="range-head">
+                      <label class="field-label" for="glowRange">Интенсивность свечения</label>
+                      <output class="range-value" id="rangeOutput" for="glowRange">50%</output>
+                    </div>
+                    <input class="range-control" id="glowRange" name="glow" type="range" min="0" max="100" step="1" value="50" style="--range-fill: 50%">
+                    <div class="range-scale" aria-hidden="true"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+                  </div>
+                </div>
+
+                <div class="demo-stage">
+                  <h3>Загрузка состояния</h3>
+                  <div class="progress-shell">
+                    <div class="progress-meta"><span id="progressStatus">Подготовка компонентов…</span><output id="progressOutput" for="progressNative">0%</output></div>
+                    <progress class="visually-hidden" id="progressNative" max="100" value="0">0%</progress>
+                    <div class="progress-track" id="progressTrack" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+                    <div class="inline-actions">
+                      <button class="btn btn-small" id="progressButton" type="button">Запустить заново</button>
+                      <button class="btn btn-ghost btn-small" id="progressComplete" type="button">Завершить</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="component-section" id="system" aria-labelledby="system-title">
+              <div class="section-head">
+                <div>
+                  <h2 id="system-title">Системные состояния</h2>
+                  <p>Уведомления, пустое состояние и интерактивная таблица дополняют базовый набор и показывают единый визуальный язык на сложных сценариях.</p>
+                </div>
+                <span class="section-index">08 / 08</span>
+              </div>
+
+              <div class="system-grid">
+                <div class="subpanel">
+                  <h3>Обратная связь и пустое состояние</h3>
+                  <div class="empty-state">
+                    <div>
+                      <span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#icon-sliders"></use></svg></span>
+                      <h3>Настроек пока нет</h3>
+                      <p>Добавьте первый пресет или вызовите уведомление, чтобы увидеть системную обратную связь.</p>
+                      <div class="inline-actions">
+                        <button class="btn btn-small" type="button" data-toast="Пресет создан и готов к настройке" data-toast-type="success">Создать пресет</button>
+                        <button class="btn btn-ghost btn-small" type="button" data-toast="Пример ошибки: действие временно недоступно" data-toast-type="error">Ошибка</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="subpanel">
+                  <h3>Строки таблицы с выбором</h3>
+                  <div class="table-wrap">
+                    <table>
+                      <caption>Мок-данные компонентов</caption>
+                      <thead><tr><th scope="col">Компонент</th><th scope="col">Состояние</th><th scope="col">Действие</th></tr></thead>
+                      <tbody>
+                        <tr data-table-row>
+                          <th scope="row">Основная кнопка</th><td>Готово</td><td><button class="btn btn-ghost btn-small" type="button" data-select-row aria-pressed="false">Выбрать</button></td>
+                        </tr>
+                        <tr data-table-row>
+                          <th scope="row">Поле ввода</th><td>Проверено</td><td><button class="btn btn-ghost btn-small" type="button" data-select-row aria-pressed="false">Выбрать</button></td>
+                        </tr>
+                        <tr data-table-row>
+                          <th scope="row">Модальное окно</th><td>Готово</td><td><button class="btn btn-ghost btn-small" type="button" data-select-row aria-pressed="false">Выбрать</button></td>
+                        </tr>
+                        <tr class="is-disabled">
+                          <th scope="row">Устаревший элемент</th><td>Недоступно</td><td><button class="btn btn-ghost btn-small" type="button" disabled>Недоступно</button></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+        </div>
+      </main>
+
+      <footer class="footer">
+        <span>Тактильный интерфейс · демонстрационная витрина</span>
+        <span><code>1 файл</code> · <code>0 зависимостей</code> · <code>0 сетевых запросов</code></span>
+      </footer>
+    </div>
+
+    <dialog id="demoModal" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+      <div class="modal-shell">
+        <header class="modal-head">
+          <h2 id="modalTitle">О компоненте</h2>
+          <button class="modal-close" type="button" data-close-modal aria-label="Закрыть модальное окно">
+            <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+          </button>
+        </header>
+        <div class="modal-body">
+          <div class="modal-preview" id="modalPreview" hidden></div>
+          <p id="modalDescription">Модальное окно появляется с мягким изменением прозрачности и масштаба. Оно закрывается по кнопке, <kbd title="Esc — клавиша отмены; закрывает модальное окно без выполнения действия.">Esc</kbd> и клику по области вне окна.</p>
+        </div>
+        <footer class="modal-actions">
+          <button class="btn btn-ghost" type="button" data-close-modal>Отмена</button>
+          <button class="btn" type="button" id="modalConfirm">Понятно</button>
+        </footer>
+      </div>
+    </dialog>
+
+    <div class="toast-region" id="toastRegion" aria-live="polite" aria-label="Уведомления"></div>
+  </div>
+
+  <noscript>
+    <p style="margin:20px auto;max-width:720px;padding:16px;color:#17202a;background:#f3e0ac;border-radius:12px"><abbr title="JavaScript — язык программирования, который обеспечивает интерактивность страницы.">JavaScript</abbr> отключён. Визуальные компоненты доступны, но интерактивные состояния, валидация и модальные окна не работают.</p>
+  </noscript>
+
+  <script type="module">
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+    const state = {
+      dialogOpener: null,
+      formTimer: 0,
+      formRequest: 0,
+      loadingTimer: 0,
+      progressFrame: 0,
+      progressValue: 0,
+      scrollProgressFrame: 0,
+      toastTimers: new WeakMap()
+    };
+
+    const menuButton = $('#menuButton');
+    const primaryNav = $('#primaryNav');
+    const navBackdrop = $('#navBackdrop');
+    const pageContent = $('#pageContent');
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const scrollStatus = $('#scrollStatus');
+    const scrollStatusFill = $('#scrollStatusFill');
+    const scrollStatusValue = $('#scrollStatusValue');
+
+    function renderScrollProgress() {
+      state.scrollProgressFrame = 0;
+      const root = document.documentElement;
+      const maxScroll = Math.max(0, root.scrollHeight - root.clientHeight);
+      const currentScroll = Math.min(maxScroll, Math.max(0, window.scrollY || root.scrollTop));
+      const value = maxScroll === 0 ? 100 : Math.round((currentScroll / maxScroll) * 100);
+      scrollStatusFill.style.width = `${value}%`;
+      scrollStatusValue.textContent = `${value}%`;
+      scrollStatus.setAttribute('aria-valuenow', String(value));
+      scrollStatus.title = `Просмотрено ${value}% страницы`;
+    }
+
+    function requestScrollProgressUpdate() {
+      if (state.scrollProgressFrame) return;
+      state.scrollProgressFrame = window.requestAnimationFrame(renderScrollProgress);
+    }
+
+    window.addEventListener('scroll', requestScrollProgressUpdate, { passive: true });
+    window.addEventListener('resize', requestScrollProgressUpdate);
+
+    function setMenu(open, returnFocus = false) {
+      const canOpen = mobileQuery.matches && open;
+      primaryNav.dataset.open = String(canOpen);
+      primaryNav.inert = mobileQuery.matches && !canOpen;
+      menuButton.setAttribute('aria-expanded', String(canOpen));
+      menuButton.setAttribute('aria-label', canOpen ? 'Закрыть меню' : 'Открыть меню');
+      navBackdrop.hidden = !canOpen;
+      pageContent.inert = canOpen;
+      document.body.classList.toggle('has-overlay', canOpen);
+
+      if (canOpen) {
+        $('.nav-link', primaryNav)?.focus();
+      } else if (returnFocus) {
+        menuButton.focus();
+      }
+    }
+
+    menuButton.addEventListener('click', () => {
+      setMenu(menuButton.getAttribute('aria-expanded') !== 'true');
+    });
+    $('.brand').addEventListener('click', () => setMenu(false));
+    navBackdrop.addEventListener('click', () => setMenu(false, true));
+    primaryNav.addEventListener('click', (event) => {
+      if (event.target.closest('a[href^="#"]')) setMenu(false);
+    });
+
+    function syncMenuMode() {
+      if (!mobileQuery.matches) setMenu(false);
+      else primaryNav.inert = primaryNav.dataset.open !== 'true';
+    }
+    mobileQuery.addEventListener?.('change', syncMenuMode);
+    syncMenuMode();
+
+    const passwordToggle = $('#passwordToggle');
+    const passwordInput = $('#demoPassword');
+
+    function setPasswordVisibility(visible) {
+      passwordInput.type = visible ? 'text' : 'password';
+      passwordToggle.setAttribute('aria-pressed', String(visible));
+      passwordToggle.setAttribute('aria-label', visible ? 'Скрыть пароль' : 'Показать пароль');
+    }
+    passwordToggle.addEventListener('click', () => setPasswordVisibility(passwordInput.type === 'password'));
+
+    const demoEmail = $('#demoEmail');
+    const demoEmailError = $('#demoEmailError');
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/u;
+
+    function validateDemoEmail() {
+      const value = demoEmail.value.trim();
+      const invalid = value.length > 0 && (!emailPattern.test(value) || !demoEmail.validity.valid);
+      demoEmail.setAttribute('aria-invalid', String(invalid));
+      demoEmail.classList.toggle('is-error', invalid);
+      demoEmail.classList.toggle('is-success', value.length > 0 && !invalid);
+      demoEmailError.textContent = invalid ? 'Введите адрес в формате name@example.ru.' : '';
+      return !invalid;
+    }
+    demoEmail.addEventListener('blur', validateDemoEmail);
+    demoEmail.addEventListener('input', () => {
+      if (demoEmail.getAttribute('aria-invalid') === 'true') validateDemoEmail();
+    });
+
+    const feedbackForm = $('#feedbackForm');
+    const formSubmit = $('#formSubmit');
+    const formSubmitLabel = $('[data-submit-label]', formSubmit);
+    const formStatus = $('#formStatus');
+    const formFields = {
+      name: $('#feedbackName'),
+      email: $('#feedbackEmail'),
+      message: $('#feedbackMessage'),
+      consent: $('#feedbackConsent')
+    };
+    const fieldErrors = {
+      name: $('#feedbackNameError'),
+      email: $('#feedbackEmailError'),
+      message: $('#feedbackMessageError'),
+      consent: $('#feedbackConsentError')
+    };
+    const touchedFields = new Set();
+
+    function getFieldError(name) {
+      const field = formFields[name];
+      if (name === 'consent') return field.checked ? '' : 'Подтвердите согласие, чтобы продолжить.';
+
+      const value = field.value.trim();
+      if (!value) {
+        if (name === 'name') return 'Введите имя.';
+        if (name === 'email') return 'Введите электронную почту.';
+        return 'Введите сообщение.';
+      }
+      if (name === 'name' && value.length < 2) return 'Имя должно содержать не менее 2 символов.';
+      if (name === 'email' && (!emailPattern.test(value) || !field.validity.valid)) return 'Введите корректный адрес электронной почты.';
+      if (name === 'message' && value.length < 10) return 'Сообщение должно содержать не менее 10 символов.';
+      return '';
+    }
+
+    function renderFieldState(name, force = false) {
+      const field = formFields[name];
+      const error = getFieldError(name);
+      const shouldShow = force || touchedFields.has(name);
+      const invalid = shouldShow && Boolean(error);
+      field.setAttribute('aria-invalid', String(invalid));
+      fieldErrors[name].textContent = invalid ? error : '';
+
+      if (field.classList.contains('input-control')) {
+        const hasValue = field.value.trim().length > 0;
+        field.classList.toggle('is-error', invalid);
+        field.classList.toggle('is-success', shouldShow && !error && hasValue);
+      } else {
+        field.closest('.choice')?.classList.toggle('is-error', invalid);
+      }
+      return !error;
+    }
+
+    Object.entries(formFields).forEach(([name, field]) => {
+      const eventName = field.type === 'checkbox' ? 'change' : 'input';
+      field.addEventListener('blur', () => {
+        touchedFields.add(name);
+        renderFieldState(name);
+      });
+      field.addEventListener(eventName, () => {
+        if (touchedFields.has(name)) renderFieldState(name);
+      });
+    });
+
+    function setFormLoading(loading) {
+      feedbackForm.setAttribute('aria-busy', String(loading));
+      formSubmit.disabled = loading;
+      formSubmit.classList.toggle('is-loading', loading);
+      formSubmitLabel.textContent = loading ? 'Отправляем…' : 'Отправить сообщение';
+    }
+
+    function cancelFormRequest() {
+      state.formRequest += 1;
+      window.clearTimeout(state.formTimer);
+      state.formTimer = 0;
+      setFormLoading(false);
+    }
+
+    function clearFormPresentation() {
+      cancelFormRequest();
+      touchedFields.clear();
+      Object.keys(formFields).forEach((name) => {
+        const field = formFields[name];
+        field.setAttribute('aria-invalid', 'false');
+        field.classList.remove('is-error', 'is-success');
+        field.closest('.choice')?.classList.remove('is-error');
+        fieldErrors[name].textContent = '';
+      });
+      formStatus.textContent = '';
+    }
+
+    feedbackForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      cancelFormRequest();
+      Object.keys(formFields).forEach((name) => touchedFields.add(name));
+      const results = Object.keys(formFields).map((name) => [name, renderFieldState(name, true)]);
+      const firstInvalid = results.find(([, valid]) => !valid)?.[0];
+
+      if (firstInvalid) {
+        formStatus.textContent = 'Исправьте отмеченные поля и повторите отправку.';
+        formFields[firstInvalid].focus();
+        return;
+      }
+
+      formFields.name.value = formFields.name.value.trim();
+      formFields.email.value = formFields.email.value.trim();
+      formFields.message.value = formFields.message.value.trim();
+      formStatus.textContent = 'Проверяем мок-данные…';
+      setFormLoading(true);
+      const requestId = ++state.formRequest;
+
+      state.formTimer = window.setTimeout(() => {
+        if (requestId !== state.formRequest) return;
+        setFormLoading(false);
+        formStatus.textContent = 'Готово: демонстрационное сообщение принято локально.';
+        showToast('Форма успешно обработана. Данные никуда не отправлялись.', 'success');
+      }, reducedMotionQuery.matches ? 80 : 950);
+    });
+
+    feedbackForm.addEventListener('reset', () => {
+      window.setTimeout(clearFormPresentation, 0);
+    });
+
+    const choiceMixed = $('#choiceMixed');
+    function setMixedChoice() {
+      choiceMixed.checked = false;
+      choiceMixed.indeterminate = true;
+    }
+    setMixedChoice();
+
+    const cardAccordionToggles = $$('[data-card-accordion]');
+
+    function setCardAccordionState(toggle, expanded) {
+      const panel = document.getElementById(toggle.getAttribute('aria-controls'));
+      if (!panel) return;
+      toggle.setAttribute('aria-expanded', String(expanded));
+      panel.hidden = !expanded;
+    }
+
+    function resetCardAccordion() {
+      cardAccordionToggles.forEach((toggle, index) => setCardAccordionState(toggle, index === 0));
+      requestScrollProgressUpdate();
+    }
+
+    cardAccordionToggles.forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const willOpen = toggle.getAttribute('aria-expanded') !== 'true';
+        cardAccordionToggles.forEach((candidate) => setCardAccordionState(candidate, candidate === toggle && willOpen));
+        requestScrollProgressUpdate();
+      });
+    });
+    resetCardAccordion();
+
+    $$('[data-select-card]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const selectedCard = button.closest('[data-card]');
+        const willSelect = !selectedCard.classList.contains('is-selected');
+        $$('[data-card]').forEach((card) => {
+          const control = $('[data-select-card]', card);
+          const selected = card === selectedCard && willSelect;
+          card.classList.toggle('is-selected', selected);
+          control.setAttribute('aria-pressed', String(selected));
+          control.textContent = selected ? 'Выбрано' : 'Выбрать';
+        });
+      });
+    });
+
+    $$('[data-select-row]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const row = button.closest('[data-table-row]');
+        const willSelect = !row.classList.contains('is-selected');
+        $$('[data-table-row]').forEach((candidate) => {
+          const control = $('[data-select-row]', candidate);
+          const selected = candidate === row && willSelect;
+          candidate.classList.toggle('is-selected', selected);
+          control.setAttribute('aria-pressed', String(selected));
+          control.textContent = selected ? 'Выбрано' : 'Выбрать';
+        });
+      });
+    });
+
+    const dialog = $('#demoModal');
+    const modalTitle = $('#modalTitle');
+    const modalDescription = $('#modalDescription');
+    const modalPreview = $('#modalPreview');
+    const modalConfirm = $('#modalConfirm');
+
+    function openModal(options, opener) {
+      if (typeof dialog.showModal !== 'function') {
+        showToast('Модальные окна не поддерживаются этим браузером.', 'error');
+        return;
+      }
+      setMenu(false);
+      state.dialogOpener = opener || document.activeElement;
+      modalTitle.textContent = options.title;
+      modalDescription.textContent = options.description;
+      modalPreview.replaceChildren();
+      modalPreview.hidden = !options.preview;
+      if (options.preview) modalPreview.append(options.preview);
+      document.body.classList.add('has-overlay');
+      dialog.showModal();
+      $('[data-close-modal]', dialog)?.focus();
+    }
+
+    function closeModal() {
+      if (dialog.open) dialog.close();
+    }
+
+    $$('[data-open-modal]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const isIntro = button.dataset.openModal === 'intro';
+        openModal({
+          title: isIntro ? 'Тактильный интерфейс' : 'Модальное окно',
+          description: isIntro
+            ? 'Концепция объединяет физическую глубину неоскевоморфизма, холодную палитру стали и сдержанную прозрачность. Светлые акценты отмечают интерактивность, а не декорируют всё подряд.'
+            : 'Это функциональное модальное окно: встроенный элемент удерживает клавиатурный фокус и закрывается клавишей отмены. Клик по затемнённой области также закрывает окно.'
+        }, button);
+      });
+    });
+
+    $$('.gallery-button').forEach((button) => {
+      button.addEventListener('click', () => {
+        const source = $('svg', button);
+        const preview = source.cloneNode(true);
+        preview.removeAttribute('role');
+        preview.removeAttribute('aria-label');
+        preview.setAttribute('aria-hidden', 'true');
+        openModal({
+          title: button.dataset.galleryTitle,
+          description: button.dataset.galleryCaption,
+          preview
+        }, button);
+      });
+    });
+
+    $$('[data-close-modal]').forEach((button) => button.addEventListener('click', closeModal));
+    modalConfirm.addEventListener('click', () => {
+      closeModal();
+      showToast('Модальное действие подтверждено.', 'success');
+    });
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) closeModal();
+    });
+    dialog.addEventListener('close', () => {
+      document.body.classList.remove('has-overlay');
+      const opener = state.dialogOpener;
+      state.dialogOpener = null;
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus();
+    });
+
+    const range = $('#glowRange');
+    const rangeOutput = $('#rangeOutput');
+    function updateRange(value = Number(range.value)) {
+      const safeValue = Math.min(100, Math.max(0, Number.isFinite(value) ? value : 50));
+      range.value = String(safeValue);
+      range.style.setProperty('--range-fill', `${safeValue}%`);
+      rangeOutput.value = `${safeValue}%`;
+      rangeOutput.textContent = `${safeValue}%`;
+    }
+    range.addEventListener('input', () => updateRange());
+    updateRange();
+
+    const progressNative = $('#progressNative');
+    const progressFill = $('#progressFill');
+    const progressTrack = $('#progressTrack');
+    const progressOutput = $('#progressOutput');
+    const progressStatus = $('#progressStatus');
+
+    function renderProgress(value) {
+      const safeValue = Math.round(Math.min(100, Math.max(0, value)));
+      state.progressValue = safeValue;
+      progressNative.value = safeValue;
+      progressNative.textContent = `${safeValue}%`;
+      progressFill.style.width = `${safeValue}%`;
+      progressOutput.value = `${safeValue}%`;
+      progressOutput.textContent = `${safeValue}%`;
+      progressTrack.classList.toggle('is-complete', safeValue === 100);
+      progressStatus.textContent = safeValue === 100 ? 'Все компоненты готовы' : 'Подготовка компонентов…';
+    }
+
+    function stopProgress() {
+      window.cancelAnimationFrame(state.progressFrame);
+      state.progressFrame = 0;
+    }
+
+    function runProgress() {
+      stopProgress();
+      renderProgress(0);
+      if (reducedMotionQuery.matches) {
+        renderProgress(100);
+        return;
+      }
+
+      const startedAt = performance.now();
+      const duration = 1800;
+      const frame = (time) => {
+        const ratio = Math.min(1, (time - startedAt) / duration);
+        const eased = 1 - Math.pow(1 - ratio, 3);
+        renderProgress(eased * 100);
+        if (ratio < 1) state.progressFrame = window.requestAnimationFrame(frame);
+        else state.progressFrame = 0;
+      };
+      state.progressFrame = window.requestAnimationFrame(frame);
+    }
+
+    $('#progressButton').addEventListener('click', runProgress);
+    $('#progressComplete').addEventListener('click', () => {
+      stopProgress();
+      renderProgress(100);
+    });
+
+    const loadingButton = $('#loadingButton');
+    const loadingLabel = $('[data-loading-label]', loadingButton);
+    function clearLoadingDemo() {
+      window.clearTimeout(state.loadingTimer);
+      state.loadingTimer = 0;
+      loadingButton.disabled = false;
+      loadingButton.classList.remove('is-loading');
+      loadingButton.removeAttribute('aria-busy');
+      loadingLabel.textContent = 'Запустить';
+    }
+    loadingButton.addEventListener('click', () => {
+      if (state.loadingTimer) return;
+      loadingButton.disabled = true;
+      loadingButton.classList.add('is-loading');
+      loadingButton.setAttribute('aria-busy', 'true');
+      loadingLabel.textContent = 'Загрузка…';
+      state.loadingTimer = window.setTimeout(() => {
+        clearLoadingDemo();
+        showToast('Состояние загрузки завершено.', 'success');
+      }, reducedMotionQuery.matches ? 80 : 900);
+    });
+
+    const toastRegion = $('#toastRegion');
+
+    function createIcon(iconId, className = 'icon') {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+      svg.setAttribute('class', className);
+      svg.setAttribute('aria-hidden', 'true');
+      use.setAttribute('href', `#${iconId}`);
+      svg.append(use);
+      return svg;
+    }
+
+    function removeToast(toast) {
+      window.clearTimeout(state.toastTimers.get(toast));
+      state.toastTimers.delete(toast);
+      toast.remove();
+    }
+
+    function armToast(toast, delay = 4300) {
+      window.clearTimeout(state.toastTimers.get(toast));
+      const timer = window.setTimeout(() => removeToast(toast), delay);
+      state.toastTimers.set(toast, timer);
+    }
+
+    function showToast(message, type = 'info') {
+      while (toastRegion.children.length >= 3) removeToast(toastRegion.firstElementChild);
+
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.dataset.type = type;
+      toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+      toast.setAttribute('aria-atomic', 'true');
+
+      const iconWrap = document.createElement('span');
+      iconWrap.className = 'toast-icon';
+      iconWrap.append(createIcon(type === 'error' ? 'icon-close' : 'icon-check', 'icon icon-sm'));
+
+      const textNode = document.createElement('p');
+      textNode.textContent = String(message).slice(0, 240);
+
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.setAttribute('aria-label', 'Закрыть уведомление');
+      close.append(createIcon('icon-close', 'icon icon-sm'));
+      close.addEventListener('click', () => removeToast(toast));
+
+      toast.append(iconWrap, textNode, close);
+      toast.addEventListener('mouseenter', () => window.clearTimeout(state.toastTimers.get(toast)));
+      toast.addEventListener('mouseleave', () => armToast(toast, 2200));
+      toast.addEventListener('focusin', () => window.clearTimeout(state.toastTimers.get(toast)));
+      toast.addEventListener('focusout', (event) => {
+        if (!toast.contains(event.relatedTarget)) armToast(toast, 2200);
+      });
+      toastRegion.append(toast);
+      armToast(toast);
+    }
+
+    $$('[data-toast]').forEach((button) => {
+      button.addEventListener('click', () => showToast(button.dataset.toast, button.dataset.toastType || 'info'));
+    });
+
+    function resetSelections() {
+      $$('[data-card]').forEach((card) => {
+        card.classList.remove('is-selected');
+        const button = $('[data-select-card]', card);
+        button.setAttribute('aria-pressed', 'false');
+        button.textContent = 'Выбрать';
+      });
+      $$('[data-table-row]').forEach((row) => {
+        row.classList.remove('is-selected');
+        const button = $('[data-select-row]', row);
+        button.setAttribute('aria-pressed', 'false');
+        button.textContent = 'Выбрать';
+      });
+    }
+
+    function resetAllComponents() {
+      setMenu(false);
+      closeModal();
+      feedbackForm.reset();
+      clearFormPresentation();
+      demoEmail.value = '';
+      demoEmail.setAttribute('aria-invalid', 'false');
+      demoEmail.classList.remove('is-error', 'is-success');
+      demoEmailError.textContent = '';
+      passwordInput.value = '';
+      setPasswordVisibility(false);
+      $('#demoSelect').selectedIndex = 0;
+      $('#choiceComponents').checked = true;
+      $('#choiceTokens').checked = false;
+      $('#choiceDisabled').checked = false;
+      $('#choiceDisabledChecked').checked = true;
+      setMixedChoice();
+      $$('input[name="density"]').forEach((input) => { input.checked = input.value === 'soft'; });
+      $('#switchGlow').checked = true;
+      $('#switchMotion').checked = true;
+      $('#switchAlerts').checked = false;
+      updateRange(50);
+      clearLoadingDemo();
+      resetSelections();
+      resetCardAccordion();
+      [...toastRegion.children].forEach(removeToast);
+      runProgress();
+      showToast('Все компоненты возвращены в исходное состояние.', 'success');
+    }
+    $('#resetAll').addEventListener('click', resetAllComponents);
+
+    const navLinks = $$('.nav-link[href^="#"]');
+    const observedSections = navLinks
+      .map((link) => document.getElementById(link.hash.slice(1)))
+      .filter((section) => section && section.id !== 'tokens');
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        navLinks.forEach((link) => {
+          const active = link.getAttribute('href') === `#${visible.target.id}`;
+          if (active) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+      }, { rootMargin: '-18% 0px -68% 0px', threshold: [0.01, 0.15, 0.35] });
+      observedSections.forEach((section) => observer.observe(section));
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      if (dialog.open) return;
+      if (menuButton.getAttribute('aria-expanded') === 'true') setMenu(false, true);
+    });
+
+    window.addEventListener('pagehide', () => {
+      cancelFormRequest();
+      clearLoadingDemo();
+      stopProgress();
+      window.cancelAnimationFrame(state.scrollProgressFrame);
+      state.scrollProgressFrame = 0;
+      [...toastRegion.children].forEach(removeToast);
+    }, { once: true });
+
+    window.requestAnimationFrame(runProgress);
+    requestScrollProgressUpdate();
+  </script>
+</body>
+</html>
