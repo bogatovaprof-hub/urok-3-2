@@ -102,7 +102,7 @@
       --font-ui: "Roboto", "Segoe UI", Arial, sans-serif;
       --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
       --header-height: 70px;
-      --content-max: 1280px;
+      --content-max: 1920px;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -207,7 +207,7 @@
 
     .site-shell {
       position: relative;
-      width: min(var(--content-max), calc(100% - 48px));
+      width: min(var(--content-max), calc(100% - clamp(16px, 2.5vw, 48px)));
       margin: 28px auto 40px;
       border: 1px solid rgba(252, 246, 221, 0.46);
       border-radius: var(--radius-shell);
