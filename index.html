@@ -10,14 +10,30 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src 'self' data:; connect-src 'none'; object-src 'none'; media-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="description" content="Интерактивная витрина компонентов в стиле тёмного тактильного неоскевоморфизма. Чистые HTML, CSS и JavaScript.">
   <title>Урок 3-2 — тактильный интерфейс</title>
+  <!--
+    КАРТА ФАЙЛА ДЛЯ РАЗРАБОТЧИКА-НОВИЧКА
+    1. HTML задаёт структуру, CSS — внешний вид, JavaScript — поведение.
+    2. Для быстрого перехода нажмите Ctrl+F и ищите метки [HTML:...], [CSS:...] или [JS:...].
+    3. Атрибут data-component="..." — постоянная поисковая метка самостоятельного компонента.
+    4. Основные блоки: HEADER, HERO, BUTTONS, INPUTS, FORM, CHOICES, CARDS,
+       GALLERY, MOTION, SYSTEM, MODAL и TOASTS.
+    Все компоненты находятся в этом файле; внешних библиотек и сетевых запросов нет.
+  -->
   <style>
     /*
+      [CSS:MAP] КАРТА СТИЛЕЙ
+      Ищите: TOKENS — переменные; SHELL — оболочка; HEADER — липкая навигация;
+      HERO — первый экран; SECTIONS — общие секции; BUTTONS, INPUTS, CHOICES,
+      CARDS, GALLERY, MOTION, SYSTEM, MODAL, TOASTS — отдельные компоненты;
+      RESPONSIVE — адаптация под разные экраны; ACCESSIBILITY — специальные режимы.
+
       Dark Tactile UI Kit
       Один автономный HTML-файл: без фреймворков, внешних библиотек и изображений.
       Шрифтовые стеки используют локальные Roboto / JetBrains Mono при наличии
       и безопасные системные fallback-шрифты при их отсутствии.
     */
 
+    /* [CSS:TOKENS] Общие переменные. Меняйте их, чтобы согласованно обновить цвета, размеры, тени и скорость анимаций во всей витрине. */
     :root {
       color-scheme: dark;
 
@@ -205,6 +221,7 @@
     .icon-sm { width: 1rem; height: 1rem; }
     .icon-lg { width: 1.5rem; height: 1.5rem; }
 
+    /* [CSS:SHELL] Внешняя рамка сайта: ограничивает ширину, задаёт фон, скругление и общую глубину страницы. */
     .site-shell {
       position: relative;
       width: min(var(--content-max), calc(100% - clamp(16px, 2.5vw, 48px)));
@@ -233,6 +250,7 @@
       mix-blend-mode: soft-light;
     }
 
+    /* [CSS:HEADER] Липкая лента остаётся сверху при прокрутке; внутри находятся бренд, меню и прогресс просмотра. */
     .topbar-sticky {
       position: sticky;
       top: 0;
@@ -389,13 +407,14 @@
 
     main { position: relative; z-index: 1; }
 
+    /* [CSS:HERO] Первый экран. Верхний отступ меньше боковых, чтобы контент начинался сразу после липкой ленты. */
     .hero {
       display: grid;
       grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
       gap: clamp(32px, 5vw, 76px);
       align-items: center;
       min-height: 610px;
-      padding: clamp(54px, 7vw, 92px) clamp(28px, 6vw, 82px) clamp(64px, 8vw, 104px);
+      padding: clamp(26px, 3vw, 44px) clamp(28px, 6vw, 82px) clamp(64px, 8vw, 104px);
     }
 
     .eyebrow, .state-label, .token-name, .tech-badge {
@@ -531,6 +550,7 @@
       box-shadow: var(--glow-gold);
     }
 
+    /* [CSS:SECTIONS] Общая раскладка витрины и одинаковая карточка-раздел для каждого семейства компонентов. */
     .workbench {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -584,6 +604,7 @@
     .state-item { display: grid; grid-template-columns: minmax(72px, 0.38fr) minmax(0, 1fr); gap: 12px; align-items: center; }
     .state-label { color: var(--text-muted); font-size: 0.62rem; }
 
+    /* [CSS:BUTTONS] Базовая кнопка и её варианты. Состояния hover, active, disabled и loading расположены рядом ниже. */
     .btn {
       position: relative;
       display: inline-flex;
@@ -652,6 +673,7 @@
     .btn.is-loading { cursor: wait; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* [CSS:INPUTS] Поля, подсказки, ошибки и формы. Класс input-control применяется к input, select и textarea. */
     .field-stack { display: grid; gap: 15px; }
     .field { min-width: 0; }
     .field label, .field-label { display: inline-block; margin-bottom: 7px; color: var(--text-warm); font-size: 0.82rem; font-weight: 600; }
@@ -721,6 +743,7 @@
     .form-status { min-height: 1.35rem; margin: 12px 0 0; color: var(--text-secondary); font-size: 0.82rem; }
     .form-note { display: inline-flex; gap: 7px; align-items: center; color: var(--text-muted); font-size: 0.76rem; }
 
+    /* [CSS:CHOICES] Чекбоксы, радиокнопки и переключатели: нативные input сохранены для клавиатуры и скринридеров. */
     .choice-layout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
     fieldset.choice-group { min-width: 0; margin: 0; padding: 18px; border: 1px solid rgba(209,219,234,.12); border-radius: var(--radius-lg); background: rgba(9,13,20,.30); }
     .choice-group legend { padding: 0 8px; color: var(--text-warm); font-size: 0.84rem; font-weight: 600; }
@@ -769,6 +792,7 @@
     .switch-row input:checked + .switch-track .switch-thumb { transform: translateX(28px); }
     .switch-row input:focus-visible + .switch-track { outline: 2px solid var(--blue-focus); outline-offset: 3px; }
 
+    /* [CSS:CARDS] Сетка и три варианта карточек. Состояние is-selected добавляется JavaScript при выборе. */
     .card-grid, .gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
     .showcase-card {
       position: relative;
@@ -820,6 +844,7 @@
     .card-accordion-toggle[aria-expanded="true"]::after { transform: rotate(225deg); }
     .card-accordion-panel { display: grid; flex: 1; align-content: start; }
 
+    /* [CSS:GALLERY] Каждая иллюстрация — кнопка: по нажатию JavaScript переносит копию SVG в модальное окно. */
     .gallery-button { display: block; width: 100%; padding: 0; color: inherit; text-align: left; border-radius: var(--radius-lg); background: transparent; cursor: pointer; }
     .gallery-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid rgba(252,246,221,.24); border-radius: var(--radius-lg); background: var(--steel-shadow); box-shadow: var(--shadow-level-2); }
     .gallery-media svg { width: 100%; height: 100%; transition: transform var(--duration-slow) var(--ease-out), filter var(--duration-slow); }
@@ -829,6 +854,7 @@
     .gallery-caption strong { font-size: .88rem; }
     .gallery-caption span { color: var(--text-muted); font-family: var(--font-mono); font-size: .66rem; }
 
+    /* [CSS:MOTION] Ползунок и индикатор прогресса; переменная --range-fill окрашивает заполненную часть дорожки. */
     .range-wrap { display: grid; gap: 16px; }
     .range-head { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
     .range-value { min-width: 70px; padding: 7px 11px; color: var(--text-dark); font-family: var(--font-mono); text-align: center; border-radius: var(--radius-pill); background: linear-gradient(180deg, var(--champagne-highlight), var(--champagne-mid)); box-shadow: var(--glow-gold); }
@@ -847,6 +873,7 @@
     .progress-fill { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--blue-active), #c7e9fb 66%, var(--champagne-light)); box-shadow: 0 0 12px rgba(87,178,249,.58), 0 0 18px rgba(224,199,144,.22); transition: width 70ms linear; }
     .progress-track.is-complete .progress-fill { box-shadow: 0 0 14px rgba(212,234,211,.62), 0 0 20px rgba(224,199,144,.24); }
 
+    /* [CSS:SYSTEM] Пустое состояние и таблица с выбором строки для системных сценариев интерфейса. */
     .system-grid { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 16px; }
     .table-wrap { overflow-x: auto; border: 1px solid rgba(209,219,234,.12); border-radius: var(--radius-lg); }
     table { width: 100%; min-width: 480px; border-collapse: collapse; color: var(--text-secondary); font-size: .82rem; }
@@ -894,6 +921,7 @@
     .shadow-demo.level-2 { box-shadow: var(--shadow-level-2); }
     .shadow-demo.level-3 { box-shadow: var(--shadow-level-3); }
 
+    /* [CSS:MODAL] Нативный dialog: браузер удерживает фокус внутри и поддерживает закрытие клавишей Esc. */
     dialog {
       width: min(620px, calc(100% - 28px));
       max-height: min(760px, calc(100vh - 28px));
@@ -929,6 +957,7 @@
     .modal-preview svg { width: 100%; height: 100%; max-height: 100%; }
     .modal-actions { justify-content: flex-end; padding: 14px 22px 22px; }
 
+    /* [CSS:TOASTS] Контейнер всплывающих уведомлений; сами уведомления создаются JavaScript только по действию пользователя. */
     .toast-region { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 300; display: grid; width: min(380px, calc(100% - 32px)); gap: 10px; pointer-events: none; }
     .toast { display: grid; grid-template-columns: 34px minmax(0,1fr) 44px; gap: 11px; align-items: center; min-height: 64px; padding: 10px 8px 10px 13px; color: var(--text-dark); border: 1px solid rgba(252,246,221,.86); border-radius: var(--radius-md); background: linear-gradient(145deg, #eee5d6, #c8c1b6); box-shadow: var(--shadow-level-3), var(--glow-gold); pointer-events: auto; animation: toast-in var(--duration-slow) var(--ease-out); }
     .toast[data-type="error"] { background: linear-gradient(145deg, #f3c2ba, #d98f86); }
@@ -950,6 +979,7 @@
       }
     }
 
+    /* [CSS:RESPONSIVE] Последовательно упрощаем сетки и навигацию для ноутбука, планшета и телефона. */
     @media (max-width: 1100px) {
       .workbench { grid-template-columns: minmax(0, 1fr); }
       .token-sidebar { position: relative; top: auto; order: -1; max-height: none; }
@@ -1002,7 +1032,7 @@
       .primary-nav[data-open="true"] { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
       .nav-link { width: 100%; justify-content: flex-start; min-height: 46px; }
       .primary-nav .btn { width: 100%; }
-      .hero { gap: 26px; padding: 52px 20px 66px; }
+      .hero { gap: 26px; padding: 32px 20px 66px; }
       .hero-visual { min-height: 360px; }
       .floating-card { width: 82%; padding: 18px; }
       .floating-card.cool { top: 20px; }
@@ -1041,6 +1071,7 @@
       .showcase-card:hover { transform: none; }
     }
 
+    /* [CSS:ACCESSIBILITY] Уважаем системные настройки уменьшения движения, прозрачности и контрастных цветов. */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -1069,7 +1100,7 @@
 <body id="top">
   <a class="skip-link" href="#main-content">Перейти к основному содержимому</a>
 
-  <!-- Единый inline SVG-спрайт: внешние иконки и сетевые запросы не используются. -->
+  <!-- [HTML:ICONS] Единый SVG-спрайт. Иконка выводится через <use href="#имя-иконки">; внешние файлы не загружаются. -->
   <svg class="visually-hidden" aria-hidden="true" width="0" height="0" focusable="false">
     <symbol id="icon-logo" viewBox="0 0 24 24">
       <path d="M12 2.7 20 7.3v9.4L12 21.3 4 16.7V7.3L12 2.7Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
@@ -1133,9 +1164,10 @@
     </symbol>
   </svg>
 
-  <div class="site-shell">
-    <div class="topbar-sticky">
-      <header class="topbar">
+  <!-- [HTML:HEADER] Липкая навигация. Ссылки ведут к id секций, а scroll-status показывает процент просмотра страницы. -->
+  <div class="site-shell" data-component="site-shell">
+    <div class="topbar-sticky" data-component="sticky-navigation">
+      <header class="topbar" data-component="navigation-bar">
         <a class="brand" href="#top" aria-label="Тактильный интерфейс — к началу страницы">
           <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#icon-logo"></use></svg></span>
           <span class="brand-text"><strong>Тактильный интерфейс</strong><small>УРОК / 3-2</small></span>
@@ -1167,10 +1199,11 @@
 
     <div class="nav-backdrop" id="navBackdrop" hidden></div>
 
-    <div id="pageContent">
+    <div id="pageContent" data-component="page-content">
       <main id="main-content">
-        <section class="hero" aria-labelledby="hero-title">
-          <div class="hero-copy">
+        <!-- [HTML:HERO] Первый экран: кратко объясняет назначение витрины и ведёт к компонентам или описанию концепции. -->
+        <section class="hero" aria-labelledby="hero-title" data-component="hero">
+          <div class="hero-copy" data-component="hero-copy">
             <p class="eyebrow">Интерактивная витрина компонентов</p>
             <h1 id="hero-title">Интерфейс, который ощущается <span class="accent">тактильно</span></h1>
             <p>Одностраничная витрина неоскевоморфных компонентов: холодная сталь, графит, мягкий свет и физически убедимые состояния — без библиотек и внешних ресурсов.</p>
@@ -1192,7 +1225,7 @@
             </div>
           </div>
 
-          <div class="hero-visual" aria-label="Пример тактильных карточек">
+          <div class="hero-visual" aria-label="Пример тактильных карточек" data-component="hero-visual">
             <span class="floating-token">глубина / 03</span>
             <article class="floating-card cool">
               <div class="floating-card-head">
@@ -1219,9 +1252,11 @@
           </div>
         </section>
 
-        <div class="workbench">
+        <!-- [HTML:SHOWCASE] Витрина. Каждая component-section — самостоятельное семейство компонентов с заголовком и примерами. -->
+        <div class="workbench" data-component="component-showcase">
           <div class="content-column">
-            <section class="component-section" id="buttons" aria-labelledby="buttons-title">
+            <!-- [HTML:BUTTONS] Кнопки: рабочие варианты слева и неизменяемая матрица визуальных состояний справа. -->
+            <section class="component-section" id="buttons" aria-labelledby="buttons-title" data-component="buttons-showcase">
               <div class="section-head">
                 <div>
                   <h2 id="buttons-title">Кнопки</h2>
@@ -1231,7 +1266,7 @@
               </div>
 
               <div class="demo-grid">
-                <div class="demo-stage">
+                <div class="demo-stage" data-component="button-variants">
                   <h3>Интерактивные варианты</h3>
                   <div class="button-row">
                     <button class="btn" type="button" data-toast="Основное действие выполнено" data-toast-type="success">
@@ -1247,7 +1282,7 @@
                   <p class="field-hint">Используйте <kbd title="Tab — переход к следующему интерактивному элементу.">Tab</kbd>, <kbd title="Enter — активация выбранной кнопки или ссылки.">Enter</kbd> и <kbd title="Space — нажатие кнопки или переключение выбранного элемента.">Space</kbd>: все элементы доступны с клавиатуры.</p>
                 </div>
 
-                <div class="state-board" aria-label="Визуальные состояния кнопки">
+                <div class="state-board" aria-label="Визуальные состояния кнопки" data-component="button-states">
                   <h3>Матрица состояний</h3>
                   <div class="state-list">
                     <div class="state-item"><span class="state-label">По умолчанию</span><button class="btn" type="button" tabindex="-1">Действие</button></div>
@@ -1266,7 +1301,8 @@
               </div>
             </section>
 
-            <section class="component-section" id="inputs" aria-labelledby="inputs-title">
+            <!-- [HTML:INPUTS] Поля: почта с проверкой, пароль с показом текста и выпадающий список роли. -->
+            <section class="component-section" id="inputs" aria-labelledby="inputs-title" data-component="inputs-showcase">
               <div class="section-head">
                 <div>
                   <h2 id="inputs-title">Поля ввода</h2>
@@ -1279,13 +1315,13 @@
                 <div class="demo-stage">
                   <h3>Живые контролы</h3>
                   <div class="field-stack">
-                    <div class="field">
+                    <div class="field" data-component="email-field">
                       <label for="demoEmail">Рабочая почта</label>
                       <input class="input-control" id="demoEmail" name="demoEmail" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="name@example.ru" aria-describedby="demoEmailHint demoEmailError" data-demo-email>
                       <p class="field-hint" id="demoEmailHint">Проверка запускается после потери фокуса.</p>
                       <p class="field-error" id="demoEmailError" aria-live="polite"></p>
                     </div>
-                    <div class="field">
+                    <div class="field" data-component="password-field">
                       <label for="demoPassword">Пароль</label>
                       <div class="input-wrap input-with-action">
                         <input class="input-control" id="demoPassword" name="demoPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Не менее 8 символов">
@@ -1294,7 +1330,7 @@
                         </button>
                       </div>
                     </div>
-                    <div class="field">
+                    <div class="field" data-component="select-field">
                       <label for="demoSelect">Роль в команде</label>
                       <select class="input-control" id="demoSelect" name="demoSelect">
                         <option value="">Выберите роль</option>
@@ -1306,7 +1342,7 @@
                   </div>
                 </div>
 
-                <div class="state-board" aria-label="Визуальные состояния поля ввода">
+                <div class="state-board" aria-label="Визуальные состояния поля ввода" data-component="input-states">
                   <h3>Состояния поля</h3>
                   <div class="state-list">
                     <div class="state-item"><span class="state-label">По умолчанию</span><span class="static-input">Введите значение</span></div>
@@ -1319,7 +1355,8 @@
               </div>
             </section>
 
-            <section class="component-section" id="form" aria-labelledby="form-title">
+            <!-- [HTML:FORM] Форма демонстрирует клиентскую валидацию и загрузку. Данные не покидают браузер. -->
+            <section class="component-section" id="form" aria-labelledby="form-title" data-component="form-showcase">
               <div class="section-head">
                 <div>
                   <h2 id="form-title">Форма обратной связи</h2>
@@ -1328,7 +1365,7 @@
                 <span class="section-index">03 / 08</span>
               </div>
 
-              <form id="feedbackForm" novalidate>
+              <form id="feedbackForm" novalidate data-component="feedback-form">
                 <div class="form-grid">
                   <div class="field">
                     <label for="feedbackName">Имя <span aria-hidden="true">*</span></label>
@@ -1367,7 +1404,8 @@
               </form>
             </section>
 
-            <section class="component-section" id="choices" aria-labelledby="choices-title">
+            <!-- [HTML:CHOICES] Нативные checkbox/radio остаются доступными, а CSS рисует поверх них тактильный вид. -->
+            <section class="component-section" id="choices" aria-labelledby="choices-title" data-component="choices-showcase">
               <div class="section-head">
                 <div>
                   <h2 id="choices-title">Чекбоксы, радио и переключатели</h2>
@@ -1377,7 +1415,7 @@
               </div>
 
               <div class="choice-layout">
-                <fieldset class="choice-group">
+                <fieldset class="choice-group" data-component="checkbox-group">
                   <legend>Состав набора</legend>
                   <div class="choice-list">
                     <label class="choice" for="choiceComponents">
@@ -1408,7 +1446,7 @@
                   </div>
                 </fieldset>
 
-                <fieldset class="choice-group">
+                <fieldset class="choice-group" data-component="radio-group">
                   <legend>Плотность интерфейса</legend>
                   <div class="choice-list">
                     <label class="choice radio" for="densitySoft">
@@ -1429,7 +1467,7 @@
                   </div>
                 </fieldset>
 
-                <fieldset class="choice-group">
+                <fieldset class="choice-group" data-component="switch-group">
                   <legend>Поведение</legend>
                   <div class="choice-list">
                     <label class="switch-row" for="switchGlow">
@@ -1452,7 +1490,8 @@
               </div>
             </section>
 
-            <section class="component-section" id="cards" aria-labelledby="cards-title">
+            <!-- [HTML:CARDS] Аккордеон карточек: одновременно раскрывается не более одной карточки; повторное нажатие закрывает её. -->
+            <section class="component-section" id="cards" aria-labelledby="cards-title" data-component="cards-showcase">
               <div class="section-head">
                 <div>
                   <h2 id="cards-title">Карточки из гибридного тактильного стекла</h2>
@@ -1463,7 +1502,7 @@
 
               <ul class="card-grid" aria-label="Варианты карточек">
                 <li>
-                  <article class="showcase-card steel" data-card>
+                  <article class="showcase-card steel" data-card data-component="steel-accordion-card">
                     <div class="card-top">
                       <span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#icon-layers"></use></svg></span>
                       <span class="card-badge">СТАЛЬ / 01</span>
@@ -1478,7 +1517,7 @@
                   </article>
                 </li>
                 <li>
-                  <article class="showcase-card taupe" data-card>
+                  <article class="showcase-card taupe" data-card data-component="taupe-accordion-card">
                     <div class="card-top">
                       <span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#icon-spark"></use></svg></span>
                       <span class="card-badge">ТЕПЛО / 02</span>
@@ -1493,7 +1532,7 @@
                   </article>
                 </li>
                 <li>
-                  <article class="showcase-card tactile-glass" data-card>
+                  <article class="showcase-card tactile-glass" data-card data-component="glass-accordion-card">
                     <div class="card-top">
                       <span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#icon-logo"></use></svg></span>
                       <span class="card-badge">СТЕКЛО / 03</span>
@@ -1510,7 +1549,8 @@
               </ul>
             </section>
 
-            <section class="component-section" id="gallery" aria-labelledby="gallery-title">
+            <!-- [HTML:GALLERY] Галерея встроенных SVG. data-gallery-* передаёт заголовок и описание в модальное окно. -->
+            <section class="component-section" id="gallery" aria-labelledby="gallery-title" data-component="gallery-showcase">
               <div class="section-head">
                 <div>
                   <h2 id="gallery-title">Галерея материалов</h2>
@@ -1521,7 +1561,7 @@
 
               <ul class="gallery-grid" aria-label="Галерея абстрактных материалов">
                 <li>
-                  <button class="gallery-button" type="button" data-gallery-title="Стальная орбита" data-gallery-caption="Холодные концентрические слои и акцент цвета шампань.">
+                  <button class="gallery-button" type="button" data-component="gallery-item" data-gallery-title="Стальная орбита" data-gallery-caption="Холодные концентрические слои и акцент цвета шампань.">
                     <span class="gallery-media">
                       <svg viewBox="0 0 400 300" role="img" aria-label="Абстрактные металлические окружности">
                         <defs><radialGradient id="gallery-g1"><stop stop-color="#8ab6e5"/><stop offset=".42" stop-color="#40546b"/><stop offset="1" stop-color="#141823"/></radialGradient></defs>
@@ -1532,7 +1572,7 @@
                   </button>
                 </li>
                 <li>
-                  <button class="gallery-button" type="button" data-gallery-title="Графитовая волна" data-gallery-caption="Многослойная волна с глубокими графитовыми тенями.">
+                  <button class="gallery-button" type="button" data-component="gallery-item" data-gallery-title="Графитовая волна" data-gallery-caption="Многослойная волна с глубокими графитовыми тенями.">
                     <span class="gallery-media">
                       <svg viewBox="0 0 400 300" role="img" aria-label="Абстрактные графитовые волны">
                         <defs><linearGradient id="gallery-g2" x2="1" y2="1"><stop stop-color="#596c83"/><stop offset=".55" stop-color="#2a2c33"/><stop offset="1" stop-color="#0b0e15"/></linearGradient></defs>
@@ -1543,7 +1583,7 @@
                   </button>
                 </li>
                 <li>
-                  <button class="gallery-button" type="button" data-gallery-title="Серо-коричневый монолит" data-gallery-caption="Тёплая монолитная форма на холодном фоне.">
+                  <button class="gallery-button" type="button" data-component="gallery-item" data-gallery-title="Серо-коричневый монолит" data-gallery-caption="Тёплая монолитная форма на холодном фоне.">
                     <span class="gallery-media">
                       <svg viewBox="0 0 400 300" role="img" aria-label="Тёплая объёмная форма">
                         <defs><linearGradient id="gallery-g3" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c5baad"/><stop offset=".5" stop-color="#7b726b"/><stop offset="1" stop-color="#423c36"/></linearGradient></defs>
@@ -1554,7 +1594,7 @@
                   </button>
                 </li>
                 <li>
-                  <button class="gallery-button" type="button" data-gallery-title="Луч фокуса" data-gallery-caption="Сценарий фокус-состояния с холодным световым кольцом.">
+                  <button class="gallery-button" type="button" data-component="gallery-item" data-gallery-title="Луч фокуса" data-gallery-caption="Сценарий фокус-состояния с холодным световым кольцом.">
                     <span class="gallery-media">
                       <svg viewBox="0 0 400 300" role="img" aria-label="Световой луч и прямоугольный фокус">
                         <defs><radialGradient id="gallery-g4"><stop stop-color="#edf8f6" stop-opacity=".88"/><stop offset=".32" stop-color="#57b2f9" stop-opacity=".48"/><stop offset="1" stop-color="#141823" stop-opacity="0"/></radialGradient></defs>
@@ -1565,7 +1605,7 @@
                   </button>
                 </li>
                 <li>
-                  <button class="gallery-button" type="button" data-gallery-title="Узел цвета шампань" data-gallery-caption="Точечный тёплый сигнал внутри холодной структуры.">
+                  <button class="gallery-button" type="button" data-component="gallery-item" data-gallery-title="Узел цвета шампань" data-gallery-caption="Точечный тёплый сигнал внутри холодной структуры.">
                     <span class="gallery-media">
                       <svg viewBox="0 0 400 300" role="img" aria-label="Сетка с тёплым светящимся узлом">
                         <defs><radialGradient id="gallery-g5"><stop stop-color="#fcf6dd"/><stop offset=".34" stop-color="#e0c790"/><stop offset="1" stop-color="#968568" stop-opacity="0"/></radialGradient></defs>
@@ -1576,7 +1616,7 @@
                   </button>
                 </li>
                 <li>
-                  <button class="gallery-button" type="button" data-gallery-title="Стеклянные слои" data-gallery-caption="Полупрозрачные слои с контролируемой плотностью.">
+                  <button class="gallery-button" type="button" data-component="gallery-item" data-gallery-title="Стеклянные слои" data-gallery-caption="Полупрозрачные слои с контролируемой плотностью.">
                     <span class="gallery-media">
                       <svg viewBox="0 0 400 300" role="img" aria-label="Полупрозрачные наклонные слои">
                         <defs><linearGradient id="gallery-g6" x2="1" y2="1"><stop stop-color="#a2cff4" stop-opacity=".78"/><stop offset="1" stop-color="#32435a" stop-opacity=".24"/></linearGradient></defs>
@@ -1589,7 +1629,8 @@
               </ul>
             </section>
 
-            <section class="component-section" id="motion" aria-labelledby="motion-title">
+            <!-- [HTML:MOTION] Динамические элементы: range меняет значение сразу, progress демонстрирует анимированную загрузку. -->
+            <section class="component-section" id="motion" aria-labelledby="motion-title" data-component="motion-showcase">
               <div class="section-head">
                 <div>
                   <h2 id="motion-title">Слайдеры и прогресс</h2>
@@ -1601,7 +1642,7 @@
               <div class="demo-grid">
                 <div class="demo-stage">
                   <h3>Интенсивность свечения</h3>
-                  <div class="range-wrap">
+                  <div class="range-wrap" data-component="range-slider">
                     <div class="range-head">
                       <label class="field-label" for="glowRange">Интенсивность свечения</label>
                       <output class="range-value" id="rangeOutput" for="glowRange">50%</output>
@@ -1613,7 +1654,7 @@
 
                 <div class="demo-stage">
                   <h3>Загрузка состояния</h3>
-                  <div class="progress-shell">
+                  <div class="progress-shell" data-component="progress-bar">
                     <div class="progress-meta"><span id="progressStatus">Подготовка компонентов…</span><output id="progressOutput" for="progressNative">0%</output></div>
                     <progress class="visually-hidden" id="progressNative" max="100" value="0">0%</progress>
                     <div class="progress-track" id="progressTrack" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
@@ -1626,7 +1667,8 @@
               </div>
             </section>
 
-            <section class="component-section" id="system" aria-labelledby="system-title">
+            <!-- [HTML:SYSTEM] Системные сценарии: пустое состояние, уведомления и таблица с выбором одной строки. -->
+            <section class="component-section" id="system" aria-labelledby="system-title" data-component="system-showcase">
               <div class="section-head">
                 <div>
                   <h2 id="system-title">Системные состояния</h2>
@@ -1638,7 +1680,7 @@
               <div class="system-grid">
                 <div class="subpanel">
                   <h3>Обратная связь и пустое состояние</h3>
-                  <div class="empty-state">
+                  <div class="empty-state" data-component="empty-state">
                     <div>
                       <span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#icon-sliders"></use></svg></span>
                       <h3>Настроек пока нет</h3>
@@ -1653,7 +1695,7 @@
 
                 <div class="subpanel">
                   <h3>Строки таблицы с выбором</h3>
-                  <div class="table-wrap">
+                  <div class="table-wrap" data-component="selectable-table">
                     <table>
                       <caption>Мок-данные компонентов</caption>
                       <thead><tr><th scope="col">Компонент</th><th scope="col">Состояние</th><th scope="col">Действие</th></tr></thead>
@@ -1681,13 +1723,15 @@
         </div>
       </main>
 
-      <footer class="footer">
+      <!-- [HTML:FOOTER] Короткая техническая сводка о составе проекта. -->
+      <footer class="footer" data-component="footer">
         <span>Тактильный интерфейс · демонстрационная витрина</span>
         <span><code>1 файл</code> · <code>0 зависимостей</code> · <code>0 сетевых запросов</code></span>
       </footer>
     </div>
 
-    <dialog id="demoModal" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+    <!-- [HTML:MODAL] Переиспользуемое нативное окно: контент меняется для концепции, примера компонента и галереи. -->
+    <dialog id="demoModal" aria-labelledby="modalTitle" aria-describedby="modalDescription" data-component="modal">
       <div class="modal-shell">
         <header class="modal-head">
           <h2 id="modalTitle">О компоненте</h2>
@@ -1706,7 +1750,8 @@
       </div>
     </dialog>
 
-    <div class="toast-region" id="toastRegion" aria-live="polite" aria-label="Уведомления"></div>
+    <!-- [HTML:TOASTS] Пустая область. JavaScript добавляет сюда до трёх уведомлений и автоматически удаляет их. -->
+    <div class="toast-region" id="toastRegion" aria-live="polite" aria-label="Уведомления" data-component="toast-region"></div>
   </div>
 
   <noscript>
@@ -1714,9 +1759,22 @@
   </noscript>
 
   <script type="module">
+    /*
+      [JS:MAP] КАРТА ПОВЕДЕНИЯ
+      HELPERS — короткие функции поиска; STATE — общие таймеры и состояние;
+      SCROLL — прогресс страницы; MENU — мобильное меню; INPUTS — поля;
+      FORM — проверка формы; CHOICES — частичный чекбокс; CARDS — аккордеон;
+      SELECTION — выбор карточки/строки; MODAL — диалог и галерея;
+      MOTION — ползунок и прогресс; TOASTS — уведомления; RESET — общий сброс;
+      NAVIGATION — активный пункт меню; CLEANUP — очистка таймеров.
+      Совет: сначала найдите нужную метку Ctrl+F, затем читайте блок сверху вниз.
+    */
+
+    // [JS:HELPERS] $(...) находит первый элемент, $$(...) — все подходящие элементы в виде массива.
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
+    // [JS:STATE] Здесь хранятся изменяемые данные, чтобы таймеры и анимации можно было безопасно остановить или перезапустить.
     const state = {
       dialogOpener: null,
       formTimer: 0,
@@ -1728,6 +1786,7 @@
       toastTimers: new WeakMap()
     };
 
+    // [JS:SCROLL] Считает долю прокрутки всей страницы и обновляет полосу в липкой ленте не чаще одного раза за кадр.
     const menuButton = $('#menuButton');
     const primaryNav = $('#primaryNav');
     const navBackdrop = $('#navBackdrop');
@@ -1758,6 +1817,7 @@
     window.addEventListener('scroll', requestScrollProgressUpdate, { passive: true });
     window.addEventListener('resize', requestScrollProgressUpdate);
 
+    // [JS:MENU] Открывает мобильное меню, блокирует фон через inert и возвращает фокус на кнопку после закрытия.
     function setMenu(open, returnFocus = false) {
       const canOpen = mobileQuery.matches && open;
       primaryNav.dataset.open = String(canOpen);
@@ -1791,6 +1851,7 @@
     mobileQuery.addEventListener?.('change', syncMenuMode);
     syncMenuMode();
 
+    // [JS:INPUTS] Показывает/скрывает пароль и проверяет демонстрационное поле электронной почты.
     const passwordToggle = $('#passwordToggle');
     const passwordInput = $('#demoPassword');
 
@@ -1819,6 +1880,7 @@
       if (demoEmail.getAttribute('aria-invalid') === 'true') validateDemoEmail();
     });
 
+    // [JS:FORM] Валидирует каждое поле, показывает точную ошибку и имитирует локальную отправку без сетевого запроса.
     const feedbackForm = $('#feedbackForm');
     const formSubmit = $('#formSubmit');
     const formSubmitLabel = $('[data-submit-label]', formSubmit);
@@ -1941,6 +2003,7 @@
       window.setTimeout(clearFormPresentation, 0);
     });
 
+    // [JS:CHOICES] indeterminate показывает частичный выбор: это отдельное визуальное состояние чекбокса.
     const choiceMixed = $('#choiceMixed');
     function setMixedChoice() {
       choiceMixed.checked = false;
@@ -1948,6 +2011,7 @@
     }
     setMixedChoice();
 
+    // [JS:CARDS] Управляет аккордеоном: открывает выбранную панель и закрывает остальные карточки.
     const cardAccordionToggles = $$('[data-card-accordion]');
 
     function setCardAccordionState(toggle, expanded) {
@@ -1971,6 +2035,7 @@
     });
     resetCardAccordion();
 
+    // [JS:SELECTION] В каждом наборе можно выбрать только одну карточку или одну строку таблицы.
     $$('[data-select-card]').forEach((button) => {
       button.addEventListener('click', () => {
         const selectedCard = button.closest('[data-card]');
@@ -1999,6 +2064,7 @@
       });
     });
 
+    // [JS:MODAL] Заполняет одно переиспользуемое dialog-окно текстом или копией SVG и возвращает фокус инициатору.
     const dialog = $('#demoModal');
     const modalTitle = $('#modalTitle');
     const modalDescription = $('#modalDescription');
@@ -2068,6 +2134,7 @@
       if (opener instanceof HTMLElement && opener.isConnected) opener.focus();
     });
 
+    // [JS:MOTION] Синхронизирует значение range, а затем управляет демонстрационным прогрессом через requestAnimationFrame.
     const range = $('#glowRange');
     const rangeOutput = $('#rangeOutput');
     function updateRange(value = Number(range.value)) {
@@ -2129,6 +2196,7 @@
       renderProgress(100);
     });
 
+    // [JS:LOADING] Временно блокирует кнопку, показывает спиннер и затем возвращает исходное состояние.
     const loadingButton = $('#loadingButton');
     const loadingLabel = $('[data-loading-label]', loadingButton);
     function clearLoadingDemo() {
@@ -2151,6 +2219,7 @@
       }, reducedMotionQuery.matches ? 80 : 900);
     });
 
+    // [JS:TOASTS] Создаёт доступные уведомления, ограничивает их количество и приостанавливает таймер при наведении или фокусе.
     const toastRegion = $('#toastRegion');
 
     function createIcon(iconId, className = 'icon') {
@@ -2212,6 +2281,7 @@
       button.addEventListener('click', () => showToast(button.dataset.toast, button.dataset.toastType || 'info'));
     });
 
+    // [JS:RESET] Возвращает все интерактивные примеры к исходным значениям и останавливает незавершённые таймеры.
     function resetSelections() {
       $$('[data-card]').forEach((card) => {
         card.classList.remove('is-selected');
@@ -2258,6 +2328,7 @@
     }
     $('#resetAll').addEventListener('click', resetAllComponents);
 
+    // [JS:NAVIGATION] IntersectionObserver отмечает пункт меню, соответствующий видимой сейчас секции.
     const navLinks = $$('.nav-link[href^="#"]');
     const observedSections = navLinks
       .map((link) => document.getElementById(link.hash.slice(1)))
@@ -2277,6 +2348,7 @@
       observedSections.forEach((section) => observer.observe(section));
     }
 
+    // [JS:CLEANUP] Закрываем меню по Esc и освобождаем таймеры/анимации при уходе со страницы.
     document.addEventListener('keydown', (event) => {
       if (event.key !== 'Escape') return;
       if (dialog.open) return;
