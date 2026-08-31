@@ -233,15 +233,27 @@
       mix-blend-mode: soft-light;
     }
 
-    .topbar {
+    .topbar-sticky {
       position: sticky;
-      top: 10px;
+      top: 0;
       z-index: 100;
+      padding: 10px 12px 12px;
+      border-radius: calc(var(--radius-shell) - 1px) calc(var(--radius-shell) - 1px) 0 0;
+      background: linear-gradient(180deg, rgba(10, 14, 22, 0.98), rgba(18, 22, 31, 0.96) 72%, rgba(18, 22, 31, 0.88));
+      box-shadow: 0 14px 28px rgba(3, 6, 12, 0.30);
+      backdrop-filter: blur(18px) saturate(118%);
+      -webkit-backdrop-filter: blur(18px) saturate(118%);
+      isolation: isolate;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 1;
       display: flex;
       align-items: center;
       min-height: var(--header-height);
       gap: var(--space-4);
-      margin: 12px;
+      margin: 0;
       padding: 10px 14px 10px 18px;
       border: var(--border-standard);
       border-radius: 26px;
@@ -955,7 +967,8 @@
     @media (max-width: 767px) {
       :root { --header-height: 62px; }
       .site-shell { width: calc(100% - 16px); margin: 8px auto 20px; border-radius: var(--radius-xl); }
-      .topbar { top: 6px; min-height: 58px; margin: 7px; padding: 7px 8px 11px 12px; border-radius: 18px; }
+      .topbar-sticky { padding: 6px 7px 7px; border-radius: calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px) 0 0; }
+      .topbar { min-height: 58px; padding: 7px 8px 11px 12px; border-radius: 18px; }
       .scroll-status { right: 48px; bottom: 4px; left: 12px; }
       .brand-mark { width: 34px; height: 34px; flex-basis: 34px; }
       .brand-text small { display: none; }
@@ -1036,12 +1049,12 @@
     }
 
     @media (prefers-reduced-transparency: reduce) {
-      .topbar, .showcase-card.tactile-glass { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--steel-dark); }
+      .topbar-sticky, .topbar, .showcase-card.tactile-glass { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--steel-dark); }
     }
 
     @media (forced-colors: active) {
       :root { --text-primary: CanvasText; --text-secondary: CanvasText; --text-muted: CanvasText; }
-      body, .site-shell, .component-section, .demo-stage, .state-board, .subpanel, .token-sidebar, .showcase-card, .topbar { color: CanvasText; background: Canvas; border: 1px solid CanvasText; box-shadow: none; }
+      body, .site-shell, .component-section, .demo-stage, .state-board, .subpanel, .token-sidebar, .showcase-card, .topbar-sticky, .topbar { color: CanvasText; background: Canvas; border: 1px solid CanvasText; box-shadow: none; }
       .btn, .menu-button, .modal-close { color: ButtonText; background: ButtonFace; border: 1px solid ButtonText; box-shadow: none; }
       .btn:focus-visible, :focus-visible { outline: 3px solid Highlight; box-shadow: none; }
       .input-control, .static-input, .switch-track, .choice-mark { color: CanvasText; background: Canvas; border: 1px solid CanvasText; box-shadow: none; }
@@ -1121,34 +1134,36 @@
   </svg>
 
   <div class="site-shell">
-    <header class="topbar">
-      <a class="brand" href="#top" aria-label="Тактильный интерфейс — к началу страницы">
-        <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#icon-logo"></use></svg></span>
-        <span class="brand-text"><strong>Тактильный интерфейс</strong><small>УРОК / 3-2</small></span>
-      </a>
+    <div class="topbar-sticky">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Тактильный интерфейс — к началу страницы">
+          <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#icon-logo"></use></svg></span>
+          <span class="brand-text"><strong>Тактильный интерфейс</strong><small>УРОК / 3-2</small></span>
+        </a>
 
-      <nav class="primary-nav" id="primaryNav" aria-label="Основная навигация" data-open="false">
-        <a class="nav-link" href="#buttons" aria-current="location">Кнопки</a>
-        <a class="nav-link" href="#inputs">Поля</a>
-        <a class="nav-link" href="#choices">Выбор</a>
-        <a class="nav-link" href="#cards">Карточки</a>
-        <a class="nav-link" href="#motion">Динамика</a>
-        <button class="btn btn-ghost btn-small" id="resetAll" type="button">
-          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-reset"></use></svg>
-          Сбросить
+        <nav class="primary-nav" id="primaryNav" aria-label="Основная навигация" data-open="false">
+          <a class="nav-link" href="#buttons" aria-current="location">Кнопки</a>
+          <a class="nav-link" href="#inputs">Поля</a>
+          <a class="nav-link" href="#choices">Выбор</a>
+          <a class="nav-link" href="#cards">Карточки</a>
+          <a class="nav-link" href="#motion">Динамика</a>
+          <button class="btn btn-ghost btn-small" id="resetAll" type="button">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-reset"></use></svg>
+            Сбросить
+          </button>
+        </nav>
+
+        <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Открыть меню">
+          <svg class="icon icon-menu" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          <svg class="icon icon-close" aria-hidden="true"><use href="#icon-close"></use></svg>
         </button>
-      </nav>
 
-      <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Открыть меню">
-        <svg class="icon icon-menu" aria-hidden="true"><use href="#icon-menu"></use></svg>
-        <svg class="icon icon-close" aria-hidden="true"><use href="#icon-close"></use></svg>
-      </button>
-
-      <div class="scroll-status" id="scrollStatus" role="progressbar" aria-label="Прогресс просмотра страницы" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" title="Просмотрено 0% страницы">
-        <span class="scroll-status-fill" id="scrollStatusFill" aria-hidden="true"></span>
-        <output class="scroll-status-value" id="scrollStatusValue">0%</output>
-      </div>
-    </header>
+        <div class="scroll-status" id="scrollStatus" role="progressbar" aria-label="Прогресс просмотра страницы" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" title="Просмотрено 0% страницы">
+          <span class="scroll-status-fill" id="scrollStatusFill" aria-hidden="true"></span>
+          <output class="scroll-status-value" id="scrollStatusValue">0%</output>
+        </div>
+      </header>
+    </div>
 
     <div class="nav-backdrop" id="navBackdrop" hidden></div>
 
